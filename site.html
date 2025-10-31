@@ -1,0 +1,2359 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Dyva Moda Feminina — Painel</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;font-family: Arial, sans-serif;transition:color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;}
+    html,body{min-height:100vh;}
+    body{background:var(--bg);padding-bottom:33px;}
+    :root{
+      --pink:#ff0080;
+      --white:#fff;
+      --text:#222;
+      --gray:#777;
+      --shadow: 0 2px 0 rgba(0,0,0,0.12);
+      --bg:#fff;
+      --card-bg:#fff;
+      --border:#ddd;
+    }
+    body.dark-mode{
+      --text:#e0e0e0;
+      --gray:#aaa;
+      --bg:#121212;
+      --card-bg:#1e1e1e;
+      --border:#333;
+      background:#121212 !important;
+    }
+    body.dark-mode .container{background:#1a1a1a !important;}
+    body.dark-mode .panel{background:#1a1a1a !important;}
+    body.dark-mode .header{background:#1a1a1a !important;}
+    body.dark-mode .home-page{background:#121212 !important;}
+    body.dark-mode .banner{background:#2d1a2d !important;}
+    body.dark-mode .categorias{background:#121212 !important;}
+    body.dark-mode .destaques{background:#121212 !important;}
+    body.dark-mode .cat-item{background:#2a2a2a;color:#e0e0e0;}
+    body.dark-mode .cat-item:hover{background:#ff0080;color:white;}
+    body.dark-mode .footer{background:#000 !important;}
+    body.dark-mode .prod-card{box-shadow:0 2px 8px rgba(255,255,255,0.05);}
+    body.dark-mode .prod-card:hover{box-shadow:0 4px 16px rgba(255,0,128,0.3);}
+    body.dark-mode .input{background:#2a2a2a;border-color:#444;color:#e0e0e0;}
+    body.dark-mode .product{background:#2a2a2a;border-color:#444;}
+    body.dark-mode h1,body.dark-mode h2,body.dark-mode h3,body.dark-mode h4{color:#e0e0e0;}
+    .theme-toggle{position:fixed;bottom:20px;right:20px;background:var(--pink);color:white;border:none;width:50px;height:50px;border-radius:50%;cursor:pointer;font-size:24px;box-shadow:0 4px 12px rgba(0,0,0,0.3);z-index:1000;transition:all 0.3s;}
+    .theme-toggle:hover{transform:scale(1.15) rotate(15deg);box-shadow:0 6px 20px rgba(255,0,128,0.5);}
+    .theme-toggle:active{transform:scale(1.05) rotate(0deg);}
+    .toast{position:fixed;top:80px;right:20px;background:#323232;color:white;padding:12px 20px;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,0.3);z-index:2000;display:flex;align-items:center;gap:10px;font-size:14px;animation:slideIn 0.3s ease;min-width:250px;}
+    .toast.success{background:#4caf50;}
+    .toast.error{background:#f44336;}
+    .toast.info{background:#2196f3;}
+    .toast.loading{background:#ff9800;}
+    .toast.loading span:first-child{animation:spin 1s linear infinite;}
+    @keyframes spin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+    @keyframes slideIn{from{transform:translateX(400px);opacity:0;}to{transform:translateX(0);opacity:1;}}
+    @keyframes slideOut{from{transform:translateX(0);opacity:1;}to{transform:translateX(400px);opacity:0;}}
+    .container{display:flex;background:var(--white);min-height:100vh;}
+    .hero{
+      width:45%;
+      background:var(--pink);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      flex-direction:column;
+      padding:40px 20px;
+      min-height:100vh;
+    }
+    .logo-circle{
+      background:rgba(255,255,255,0.1);
+      border-radius:50%;
+      width:180px;height:180px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      flex-direction:column;
+      animation:fadeInUp 0.8s ease-out;
+      box-shadow:0 8px 32px rgba(0,0,0,0.2);
+    }
+    .logo-title{color:white;font-size:48px;font-weight:bold;letter-spacing:3px;}
+    .footer{background:#333;color:white;text-align:center;padding:6px;font-size:12px;position:fixed;bottom:0;left:0;right:0;z-index:100;box-shadow:0 -4px 20px rgba(0,0,0,0.2);border-top:2px solid var(--pink);}
+    #homeContent{min-height:calc(100vh - 33px);}
+    .logo-sub{color:white;font-size:18px;margin-top:5px;font-style:italic;}
+    .panel{width:55%;display:flex;justify-content:center;align-items:flex-start;padding:60px;background:var(--white);min-height:100vh;}
+    .card{width:100%;max-width:420px;min-height:400px;background:var(--card-bg);padding:30px;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,0.08);border:1px solid var(--border);}
+    h1{text-align:center;color:var(--text);font-size:28px;margin-bottom:20px;}
+    
+    /* Header da Home */
+    .header{background:var(--pink);padding:10px 40px;display:flex;justify-content:space-between;align-items:center;}
+    .header-logo{color:white;font-size:28px;font-weight:bold;letter-spacing:2px;text-shadow:0 2px 10px rgba(255,255,255,0.3);cursor:pointer;transition:all 0.3s;}
+    .header-logo:hover{transform:scale(1.05);text-shadow:0 4px 20px rgba(255,255,255,0.5);}
+    .header-logo small{font-size:11px;display:block;font-style:italic;font-weight:normal;}
+    .search-bar{display:flex;gap:0;}
+    .search-bar input{padding:6px 12px;border:none;border-radius:3px 0 0 3px;width:300px;font-size:14px;transition:all 0.3s;}
+    .search-bar input:focus{outline:none;box-shadow:0 0 0 2px rgba(255,255,255,0.3);}
+    .search-bar button{padding:6px 12px;background:#000;color:white;border:none;border-radius:0 3px 3px 0;cursor:pointer;transition:all 0.2s;}
+    .search-bar button:hover{background:#333;}
+    .search-bar button:active{transform:scale(0.95);}
+    .header-icons{display:flex;gap:15px;align-items:center;}
+    .header-icons svg{width:24px;height:24px;fill:white;cursor:pointer;transition:all 0.2s;}
+    .header-icons svg:hover{transform:scale(1.15);filter:drop-shadow(0 2px 4px rgba(0,0,0,0.3));}
+    .header-icons svg:active{transform:scale(1.05);}
+    .header-icons span{position:relative;font-size:24px;}
+    .badge{position:absolute;top:-8px;right:-10px;background:#ff0080;color:white;border-radius:50%;width:20px;height:20px;font-size:11px;font-weight:bold;display:flex;align-items:center;justify-content:center;border:2px solid white;animation:pulse 2s infinite;}
+    @keyframes pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.05);}}
+    .nav-menu{background:var(--pink);padding:6px 40px;display:flex;gap:30px;justify-content:center;}
+    .nav-menu a{color:white;text-decoration:none;font-weight:500;cursor:pointer;font-size:14px;transition:all 0.2s;position:relative;padding:2px 0;}
+    .nav-menu a::after{content:'';position:absolute;bottom:-2px;left:0;width:0;height:2px;background:white;transition:width 0.3s;}
+    .nav-menu a:hover::after{width:100%;}
+    .nav-menu a:hover{transform:translateY(-1px);}
+    
+    /* Banner Home */
+    .banner{background:#ffb3d9;padding:10px 20px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,0.1);}
+    .banner h2{font-size:18px;font-weight:bold;margin-bottom:5px;}
+    .banner button{background:white;border:none;padding:4px 18px;border-radius:25px;font-size:12px;cursor:pointer;transition:all 0.2s;font-weight:600;box-shadow:0 2px 6px rgba(0,0,0,0.15);}
+    .banner button:hover{transform:scale(1.08);box-shadow:0 4px 10px rgba(0,0,0,0.25);}
+    .banner button:active{transform:scale(1.02);}
+    
+    /* Categorias */
+    .categorias{padding:10px 20px 6px;}
+    .categorias h3{font-size:15px;margin-bottom:6px;text-align:center;}
+    .cat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;max-width:700px;margin:0 auto;}
+        .cat-item{
+      background:var(--card-bg);
+      color:var(--text);
+      padding:8px;
+      border-radius:8px;
+      text-align:center;
+      cursor:pointer;
+      box-shadow:0 2px 8px rgba(0,0,0,0.1);
+      transition:all 0.3s;
+      font-size:13px;
+      font-weight:500;
+      border:1px solid var(--border);
+      position:relative;
+      overflow:hidden;
+    }
+    .cat-item::before{content:'';position:absolute;top:50%;left:50%;width:0;height:0;border-radius:50%;background:rgba(255,255,255,0.3);transform:translate(-50%,-50%);transition:width 0.6s,height 0.6s;}
+    .cat-item:hover::before{width:200%;height:200%;}
+    .cat-item:hover{background:#ff0080;color:white;transform:translateY(-3px);box-shadow:0 4px 16px rgba(255,0,128,0.4);}
+    
+    /* Destaques */
+    .destaques{padding:10px 20px 12px;}
+    .destaques h3{text-align:center;font-size:15px;margin-bottom:6px;}
+    .prod-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:850px;margin:0 auto;}
+    .prod-card{text-align:center;position:relative;transition:all 0.3s;cursor:pointer;background:var(--card-bg);border:1px solid var(--border);border-radius:8px;padding:6px;overflow:hidden;}
+    .prod-card:hover{transform:translateY(-5px);box-shadow:0 6px 20px rgba(255,0,128,0.25);border-color:var(--pink);}
+    .prod-card img{width:100%;height:170px;object-fit:cover;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.1);transition:transform 0.3s;}
+    .prod-card:hover img{transform:scale(1.05);}
+    .prod-card h4{margin:5px 0 3px;font-size:13px;}
+    .prod-card-buttons{display:flex;gap:8px;margin-top:8px;padding:0 10px;}
+    .prod-card-buttons button{transition:all 0.2s;font-weight:600;text-transform:uppercase;letter-spacing:0.3px;}
+    .prod-card-buttons button:hover{transform:translateY(-2px);}
+    .btn-fav{position:absolute;top:10px;right:10px;background:white;border:none;border-radius:50%;width:36px;height:36px;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,0.2);font-size:18px;transition:all 0.2s;z-index:10;display:flex;align-items:center;justify-content:center;}
+    .btn-fav:hover{transform:scale(1.15);box-shadow:0 4px 10px rgba(0,0,0,0.3);}
+    .btn-fav:active{transform:scale(1.05);}
+    .input{width:100%;padding:12px;border:1px solid #ddd;border-radius:6px;margin-bottom:12px;font-size:16px;box-shadow:var(--shadow);transition:all 0.3s;}
+    .input:focus{outline:none;border-color:var(--pink);box-shadow:0 0 0 3px rgba(255,0,128,0.1);}
+    .btn{width:100%;padding:12px;background:var(--pink);color:#fff;font-size:18px;border:none;border-radius:6px;cursor:pointer;margin-top:10px;transition:all 0.2s;font-weight:600;}
+    .btn:hover{background:#e00070;transform:translateY(-2px);box-shadow:0 4px 12px rgba(255,0,128,0.3);}
+    .btn:active{transform:translateY(0);box-shadow:0 2px 6px rgba(255,0,128,0.2);}
+    .link-row{display:flex;justify-content:space-between;font-size:14px;color:var(--gray);margin-top:5px;}
+    .text-link{cursor:pointer;color:var(--gray);text-decoration:underline;transition:all 0.2s;}
+    .text-link:hover{color:var(--pink);text-decoration:none;}
+    .small{font-size:14px;color:var(--gray);}
+    .product-list{margin-top:10px;}
+    .product{display:flex;justify-content:space-between;align-items:center;border:1px solid #ddd;border-radius:4px;padding:10px;margin-bottom:10px;}
+    .product img{width:60px;height:60px;object-fit:cover;border-radius:5px;border:1px solid #ccc;}
+    .product .name{font-weight:bold;}
+    .btn-delete{background:red;color:white;border:none;border-radius:3px;padding:6px 10px;cursor:pointer;transition:all 0.2s;}
+    .btn-delete:hover{background:#cc0000;transform:translateY(-2px);box-shadow:0 2px 8px rgba(255,0,0,0.3);}
+    .btn-delete:active{transform:translateY(0);}
+    .muted-center{text-align:center;color:var(--gray);margin-top:10px;}
+    .overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:none;align-items:center;justify-content:center;backdrop-filter:blur(2px);animation:fadeIn 0.2s;}
+    .overlay.show{display:flex;}
+    .modal{background:white;border-radius:12px;padding:25px;width:320px;box-shadow:0 8px 32px rgba(0,0,0,0.3);animation:slideUp 0.3s;}
+    .modal h2{font-size:20px;margin-bottom:10px;color:var(--text);}
+    .modal p{font-size:14px;color:var(--gray);margin-bottom:10px;}
+    .modal .actions{display:flex;justify-content:flex-end;gap:10px;margin-top:10px;}
+    @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+    @keyframes slideUp{from{transform:translateY(20px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+    @keyframes fadeInUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+    @keyframes pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.05);}}
+
+    /* ==== Novas telas ==== */
+    table{width:100%;border-collapse:separate;border-spacing:0;margin-top:20px;border-radius:8px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.1);table-layout:fixed;}
+    th,td{border:1px solid var(--border);padding:10px;text-align:center;word-wrap:break-word;overflow:hidden;}
+    th{background:var(--pink);color:white;font-weight:600;text-transform:uppercase;font-size:12px;letter-spacing:0.5px;}
+    td{background:var(--card-bg);color:var(--text);}
+    td img{width:60px;height:60px;object-fit:cover;border-radius:5px;flex-shrink:0;}
+    .btn-small{padding:8px 16px;font-size:14px;background:red;color:white;border:none;border-radius:4px;cursor:pointer;transition:all 0.2s;white-space:nowrap;min-width:80px;}
+    .btn-small:hover{background:#cc0000;transform:translateY(-1px);box-shadow:0 2px 6px rgba(255,0,0,0.3);}
+    .btn-small:active{transform:translateY(0);}
+    .btn-voltar{background:#ccc;color:#000;margin-top:15px;transition:all 0.2s;}
+    .btn-voltar:hover{background:#bbb;transform:translateY(-2px);box-shadow:0 2px 8px rgba(0,0,0,0.2);}
+    .btn-voltar:active{transform:translateY(0);}
+    .form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:15px;}
+    .pagamento{margin-top:15px;color:var(--text);}
+    .pagamento label{display:block;margin-bottom:5px;color:var(--text);}
+    .resumo{text-align:right;margin-top:15px;font-weight:bold;}
+    body.dark-mode .pagamento label{color:#e0e0e0;}
+    @media(max-width:900px){.container{flex-direction:column;}.hero{width:100%;height:240px;}.panel{width:100%;padding:20px;}}
+  </style>
+</head>
+<body>
+  <div id="homeContent"></div>
+  
+  <div id="app">
+    <div class="container">
+      <div class="hero">
+        <div class="logo-circle">
+          <div class="logo-title">DYVA</div>
+          <div class="logo-sub">Moda Feminina</div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="card" id="card-root"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">© 2025 Dyva Moda Feminina. Todos os direitos reservados.</div>
+
+  <button class="theme-toggle" onclick="toggleTheme()" title="Alternar tema">🌙</button>
+
+  <div class="overlay" id="overlay">
+    <div class="modal">
+      <h2>Recuperar Senha</h2>
+      <p>Digite o e-mail cadastrado para receber o link de redefinição.</p>
+      <input id="resetEmail" class="input" placeholder="Digite seu e-mail">
+      <div class="actions">
+        <button class="btn" id="btnEnviarReset" style="width:auto;">Enviar</button>
+        <button class="btn" id="btnCancelarReset" style="width:auto;background:#ccc;color:#000;">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+// ==========================================
+// DYVA - E-commerce Front-End
+// Sistema de Loja Virtual com Gestão Completa
+// ==========================================
+// ARQUITETURA: Single Page Application (SPA)
+// PERSISTÊNCIA: localStorage (preparado para API REST)
+// PADRÃO: MVC simplificado com funções modulares
+// ==========================================
+
+// === UTILITÁRIOS ===
+function $(el){return document.querySelector(el)}
+function save(key,data){localStorage.setItem(key, JSON.stringify(data))}
+function load(key){return JSON.parse(localStorage.getItem(key) || '[]')}
+
+// === GESTÃO DE USUÁRIOS ===
+function getUsers(){
+  let users = load('dyva_users');
+  // Adiciona usuário admin demo se não existir
+  if(users.length === 0){
+    users = [{email:'admin@dyva.com', senha:'123456'}];
+    save('dyva_users', users);
+  }
+  return users;
+}
+
+// === INICIALIZAÇÃO DE PRODUTOS ===
+// Pré-carrega 6 produtos para demonstração (só na primeira vez)
+function initProducts(){
+  const user = 'admin@dyva.com';
+  const produtosExistentes = getProducts(user);
+  
+  // Só criar produtos se não existirem
+  if(produtosExistentes.length === 0) {
+    const produtos = [
+      {id:1730000001, nome:'Blusa Xadrez e Short Saia', preco:'115.00', categoria:'Blusas', img:'https://i.ibb.co/CsNTvLWW/Blusa.jpg', descricao:'Conjunto leve e estiloso para o dia a dia.', tamanhos:['PP','P','M','G','GG']},
+      {id:1730000002, nome:'Conjunto no tecido Duna', preco:'70.00', categoria:'Croppeds', img:'https://i.ibb.co/tTqd5nGS/Conjunto-2.jpg', descricao:'Conjunto em tecido duna com ótimo caimento.', tamanhos:['PP','P','M','G','GG']},
+      {id:1730000003, nome:'Macaquinho Luara', preco:'80.00', categoria:'Macaquinhos', img:'https://i.ibb.co/qLmVqWJv/Macaquinho-Luara.jpg', descricao:'Macaquinho confortável para qualquer ocasião.', tamanhos:['PP','P','M','G','GG']},
+      {id:1730000004, nome:'Conjunto Tweed - Blazer e Short', preco:'130.00', categoria:'Croppeds', img:'https://i.ibb.co/KcFNJt6n/Conjunto.jpg', descricao:'Conjunto tweed elegante com blazer e short.', tamanhos:['PP','P','M','G','GG']},
+      {id:1730000005, nome:'Saia Tweed e Blusa Longa', preco:'115.00', categoria:'Saias', img:'https://i.ibb.co/F48L5cgj/Saia.jpg', descricao:'Saia tweed com blusa de manga longa.', tamanhos:['PP','P','M','G','GG']},
+      {id:1730000006, nome:'Cropped e Short Saia', preco:'115.00', categoria:'Croppeds', img:'https://i.ibb.co/GQ767fzQ/Cropped.jpg', descricao:'Cropped com short saia super versátil.', tamanhos:['PP','P','M','G','GG']}
+    ];
+    saveProducts(user, produtos);
+  } else {
+    // Garantir que produtos antigos tenham os campos necessários
+    let atualizado = false;
+    const produtosAtualizados = produtosExistentes.map(p => {
+      let produtoAtualizado = {...p};
+      
+      if(!produtoAtualizado.descricao) {
+        produtoAtualizado.descricao = '';
+        atualizado = true;
+      }
+      
+      if(!produtoAtualizado.tamanhos || !Array.isArray(produtoAtualizado.tamanhos) || produtoAtualizado.tamanhos.length === 0) {
+        produtoAtualizado.tamanhos = ['PP','P','M','G','GG'];
+        atualizado = true;
+      }
+      
+      return produtoAtualizado;
+    });
+    
+    if(atualizado) {
+      saveProducts(user, produtosAtualizados);
+    }
+  }
+}
+
+// Função para resetar produtos (útil para debug) - chame no console: resetProdutos()
+function resetProdutos() {
+  const user = 'admin@dyva.com';
+  localStorage.removeItem('dyva_prod_' + user);
+  initProducts();
+  console.log('✅ Produtos resetados! Recarregue a página.');
+}
+
+function addUser(user){let users=getUsers();users.push(user);save('dyva_users',users)}
+function findUser(email){return getUsers().find(u=>u.email===email)}
+
+// === SESSÃO (substituir por JWT/Tokens na integração backend) ===
+function setSession(email){localStorage.setItem('dyva_session', email)}
+function getSession(){return localStorage.getItem('dyva_session')}
+function logout(){localStorage.removeItem('dyva_session')}
+
+// === PRODUTOS (endpoints prontos para API REST) ===
+function getProducts(email){return load('dyva_prod_'+email)}
+function saveProducts(email, arr){save('dyva_prod_'+email, arr)}
+
+// === CUPONS ===
+function getCupons(){
+  // Defaults que DEVEM existir e estar ativos
+  const defaults = [
+    {id: 1, codigo: 'PRIMEIRA10', tipo: 'percentual', valor: 10, descricao: '10% de desconto na primeira compra', ativo: true},
+    {id: 2, codigo: 'DYVA20', tipo: 'percentual', valor: 20, descricao: '20% de desconto especial', ativo: true},
+    {id: 3, codigo: 'FRETEGRATIS', tipo: 'frete', valor: 0, descricao: 'Frete grátis para todo Brasil', ativo: true},
+    {id: 4, codigo: 'BEM-VINDO', tipo: 'fixo', valor: 15, descricao: 'R$ 15 de desconto', ativo: true}
+  ]
+
+  let cupons = load('dyva_cupons')
+
+  // Caso não existam, cria com os padrões
+  if(!cupons || !Array.isArray(cupons)) {
+    cupons = [...defaults]
+    save('dyva_cupons', cupons)
+    return cupons
+  }
+
+  // Garante que os cupons padrões existam e estejam ativos
+  let mudou = false
+  defaults.forEach(def => {
+    const idx = cupons.findIndex(c => (c.codigo || '').toUpperCase() === def.codigo)
+    if(idx === -1) {
+      cupons.push({...def})
+      mudou = true
+    } else {
+      // Normaliza estrutura e força ativo=true para padrões
+      const existente = cupons[idx]
+      const atualizado = {
+        id: existente.id ?? def.id,
+        codigo: (existente.codigo || '').toUpperCase(),
+        tipo: existente.tipo || def.tipo,
+        valor: Number(existente.valor ?? def.valor),
+        descricao: existente.descricao || def.descricao,
+        ativo: true // sempre ativo para cupons padrão
+      }
+      cupons[idx] = atualizado
+      mudou = true
+    }
+  })
+
+  if(mudou) save('dyva_cupons', cupons)
+  return cupons
+}
+function saveCupons(cupons){save('dyva_cupons', cupons)}
+
+const root = document.getElementById('card-root')
+const appContainer = document.querySelector('.container')
+
+// === NAVEGAÇÃO SPA (Single Page Application) ===
+function showContainer(){
+  appContainer.style.display = 'flex'
+  document.getElementById('homeContent').style.display = 'none'
+}
+
+function hideContainer(){
+  appContainer.style.display = 'none'
+  document.getElementById('homeContent').style.display = 'block'
+}
+
+// === CARRINHO DE COMPRAS ===
+// Estrutura: [{id: produtoId, qty: quantidade}]
+function getCart(email){
+  let cart = load('dyva_cart_'+email)
+  if(!Array.isArray(cart)) cart = []
+  return cart
+}
+function saveCart(email, arr){save('dyva_cart_'+email, arr)}
+function addToCartWithSize(email, prodId, tamanho){
+  let cart = getCart(email)
+  const item = cart.find(c => c.id === prodId && c.tamanho === tamanho)
+  if(item){
+    item.qty += 1
+  } else {
+    cart.push({id: prodId, tamanho: tamanho, qty: 1})
+  }
+  saveCart(email, cart)
+}
+function addToCart(email, prodId){
+  // Novo fluxo: exigir seleção de tamanho abrindo a página de detalhes
+  abrirDetalheProduto(prodId)
+}
+function removeFromCart(email, prodId, tamanho){
+  let cart = getCart(email).filter(c => !(c.id === prodId && (tamanho ? c.tamanho === tamanho : true)))
+  saveCart(email, cart)
+}
+function updateQty(email, prodId, qty, tamanho){
+  let cart = getCart(email)
+  const item = cart.find(c => c.id === prodId && (tamanho ? c.tamanho === tamanho : true))
+  if(item){
+    item.qty = qty
+    if(item.qty <= 0) removeFromCart(email, prodId, tamanho)
+    else saveCart(email, cart)
+  }
+}
+
+function getPedidos(email){return load('dyva_pedidos_'+email)}
+function savePedidos(email, arr){save('dyva_pedidos_'+email, arr)}
+function addPedido(email, pedido){
+  let pedidos = getPedidos(email)
+  pedidos.push(pedido)
+  savePedidos(email, pedidos)
+}
+
+function getFavorites(email){return load('dyva_fav_'+email)}
+function saveFavorites(email, arr){save('dyva_fav_'+email, arr)}
+function addToFavorites(email, prodId){
+  let favs = getFavorites(email)
+  if(!favs.includes(prodId)){
+    favs.push(prodId)
+    saveFavorites(email, favs)
+  }
+}
+function removeFromFavorites(email, prodId){
+  let favs = getFavorites(email).filter(id => id !== prodId)
+  saveFavorites(email, favs)
+}
+
+function mostrarResultados(produtos){
+  hideContainer()
+  const user = getSession()
+  const favoritos = user ? getFavorites(user) : []
+  const homeContent = document.getElementById('homeContent')
+  homeContent.innerHTML = `
+    <div class="header">
+      <div class="header-logo">DYVA<br><small>Moda Feminina</small></div>
+      <div class="search-bar">
+        <input placeholder="Buscar" id="searchInput2">
+        <button id="btnBuscar2">🔍</button>
+      </div>
+      <div class="header-icons">
+        <span id="loginIcon2" style="cursor:pointer">👤</span>
+        <span id="cartIcon2" style="cursor:pointer">🛒</span>
+        <span id="favIcon2" style="cursor:pointer">❤️</span>
+      </div>
+    </div>
+    <div class="nav-menu">
+      <a id="navInicio2">INÍCIO</a>
+      <a id="navProdutos2">PRODUTOS</a>
+      <a id="navCarrinho2">CARRINHO</a>
+    </div>
+    <div class="banner">
+      <h2>Nova Coleção<br>Verão 2025</h2>
+      <button id="btnConfira2">Confira</button>
+    </div>
+    <div style="padding:10px 20px 12px;background:var(--bg);">
+      <h2 style="text-align:center;margin-bottom:10px;font-size:18px;">Resultados da Busca (${produtos.length})</h2>
+      <div class="prod-grid" style="max-width:850px;margin:0 auto;">
+        ${produtos.length === 0 ? '<p style="text-align:center;color:var(--gray);grid-column:1/-1;">Nenhum produto encontrado.</p>' : 
+          produtos.map(p => {
+            const isFavorito = favoritos.includes(p.id)
+            return `
+            <div class="prod-card">
+              <button class="btn-fav" onclick="adicionarAoFavoritos(${p.id})" title="${isFavorito ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}" style="color:${isFavorito ? '#ff0080' : '#666'};">${isFavorito ? '❤️' : '🤍'}</button>
+              <img src="${p.img || 'https://via.placeholder.com/200x200?text=Produto'}">
+              <h4>${p.nome}</h4>
+              <p style="color:var(--gray);font-size:12px;">${p.categoria || ''}</p>
+              <p style="font-weight:bold;color:#ff0080;font-size:16px;margin:5px 0;">R$ ${p.preco}</p>
+              <button class="btn" style="font-size:13px;padding:8px;margin-top:8px;width:100%;" onclick="abrirDetalheProduto(${p.id})">🛒 Ver detalhes</button>
+            </div>
+          `}).join('')
+        }
+      </div>
+    </div>
+  `
+  document.getElementById('navInicio2').onclick = () => homePage()
+  document.getElementById('navProdutos2').onclick = () => {
+    homePage()
+    setTimeout(()=>document.querySelector('.destaques')?.scrollIntoView({behavior:'smooth'}), 100)
+  }
+  document.getElementById('navCarrinho2').onclick = () => {showContainer();carrinhoPage()}
+  document.getElementById('loginIcon2').onclick = () => {showContainer();if(getSession()) perfilPage();else loginPage()}
+  document.getElementById('cartIcon2').onclick = () => {showContainer();carrinhoPage()}
+  document.getElementById('favIcon2').onclick = () => favoritosPage()
+  document.getElementById('btnConfira2').onclick = () => {
+    homePage()
+    setTimeout(()=>document.querySelector('.destaques')?.scrollIntoView({behavior:'smooth'}), 100)
+  }
+  updateBadges()
+}
+
+window.adicionarAoCarrinho = function(prodId){
+  const user = getSession()
+  if(!user){showToast('Faça login primeiro!', 'error');return}
+  // Buscar produtos sempre do admin (catálogo central)
+  const produtos = getProducts('admin@dyva.com')
+  const produto = produtos.find(p => p.id === prodId)
+  if(produto){
+  // Abrir detalhes para escolher tamanho
+  abrirDetalheProduto(prodId)
+  }
+}
+
+window.adicionarAoFavoritos = function(prodId){
+  const user = getSession()
+  if(!user){showToast('Faça login primeiro!', 'error');return}
+  const favoritos = getFavorites(user)
+  
+  // Verifica se já está favoritado
+  if(favoritos.includes(prodId)){
+    // Remove dos favoritos
+    removeFromFavorites(user, prodId)
+    showToast('💔 Removido dos favoritos', 'info')
+  } else {
+    // Adiciona aos favoritos
+    addToFavorites(user, prodId)
+    showToast('❤️ Adicionado aos favoritos!', 'success')
+  }
+  
+  // Recarrega a página atual
+  const btn = event.target
+  if(btn){
+    const isFavorito = !favoritos.includes(prodId)
+    btn.textContent = isFavorito ? '❤️' : '🤍'
+    btn.style.color = isFavorito ? '#ff0080' : '#666'
+    btn.title = isFavorito ? 'Remover dos favoritos' : 'Adicionar aos favoritos'
+  }
+  updateBadges()
+}
+
+function favoritosPage(){
+  hideContainer()
+  const user = getSession()
+  if(!user){
+    showToast('Faça login para acessar seus favoritos!','info')
+    setTimeout(()=>loginPage(), 1000)
+    return
+  }
+  const favoritos = getFavorites(user)
+  // Buscar produtos sempre do admin (catálogo central)
+  const produtos = getProducts('admin@dyva.com').filter(p => favoritos.includes(p.id))
+  
+  const homeContent = document.getElementById('homeContent')
+  homeContent.innerHTML = `
+    <div class="header">
+      <div class="header-logo">DYVA<br><small>Moda Feminina</small></div>
+      <div class="search-bar">
+        <input placeholder="Buscar" id="searchInput3">
+        <button id="btnBuscar3">🔍</button>
+      </div>
+      <div class="header-icons">
+        <span id="loginIcon3" style="cursor:pointer">👤</span>
+        <span id="cartIcon3" style="cursor:pointer">🛒</span>
+        <span id="favIcon3" style="cursor:pointer">❤️</span>
+      </div>
+    </div>
+    <div class="nav-menu">
+      <a id="navInicio3">INÍCIO</a>
+      <a id="navProdutos3">PRODUTOS</a>
+      <a id="navCarrinho3">CARRINHO</a>
+    </div>
+    <div class="banner">
+      <h2>Nova Coleção<br>Verão 2025</h2>
+      <button id="btnConfira3">Confira</button>
+    </div>
+    <div style="padding:10px 20px 12px;background:var(--bg);">
+      <h2 style="text-align:center;margin-bottom:10px;font-size:18px;">❤️ Meus Favoritos</h2>
+      <div style="text-align:center;margin-bottom:10px;">
+        <button class="btn" style="padding:6px 20px;font-size:13px;display:inline-block;width:auto;" id="btnPerfil3">👤 Meu Perfil</button>
+      </div>
+      <div class="prod-grid" style="max-width:850px;margin:0 auto;">
+        ${produtos.length === 0 ? '<p style="text-align:center;color:var(--gray);grid-column:1/-1;">Você ainda não tem favoritos.</p>' : 
+          produtos.map(p => `
+            <div class="prod-card">
+              <img src="${p.img || 'https://via.placeholder.com/200x200?text=Produto'}">
+              <h4>${p.nome}</h4>
+              <p style="color:var(--gray);font-size:12px;">${p.categoria || ''}</p>
+              <p style="font-weight:bold;color:#ff0080;font-size:16px;margin:5px 0;">R$ ${p.preco}</p>
+              <button class="btn" style="font-size:13px;padding:8px;margin-top:8px;background:#e91e63;" onclick="removerFavorito(${p.id})">🗑️ Remover</button>
+              <button class="btn" style="font-size:13px;padding:8px;margin-top:8px;" onclick="abrirDetalheProduto(${p.id})">ℹ️ Detalhes</button>
+            </div>
+          `).join('')
+        }
+      </div>
+    </div>
+  `
+  document.getElementById('navInicio3').onclick = () => homePage()
+  document.getElementById('navProdutos3').onclick = () => {
+    homePage()
+    setTimeout(()=>document.querySelector('.destaques')?.scrollIntoView({behavior:'smooth'}), 100)
+  }
+  document.getElementById('navCarrinho3').onclick = () => {showContainer();carrinhoPage()}
+  document.getElementById('cartIcon3').onclick = () => {showContainer();carrinhoPage()}
+  document.getElementById('favIcon3').onclick = () => favoritosPage()
+  document.getElementById('loginIcon3').onclick = () => {showContainer();perfilPage()}
+  document.getElementById('btnPerfil3').onclick = () => {showContainer();perfilPage()}
+  document.getElementById('btnConfira3').onclick = () => {
+    homePage()
+    setTimeout(()=>document.querySelector('.destaques')?.scrollIntoView({behavior:'smooth'}), 100)
+  }
+  
+  // Buscar
+  document.getElementById('btnBuscar3').onclick = () => {
+    const termo = document.getElementById('searchInput3').value.trim().toLowerCase()
+    if(!termo) return
+    const todosProdutos = getProducts('admin@dyva.com')
+    const resultados = todosProdutos.filter(p => 
+      p.nome.toLowerCase().includes(termo) || 
+      (p.categoria && p.categoria.toLowerCase().includes(termo))
+    )
+    mostrarResultados(resultados)
+  }
+  updateBadges()
+}
+
+window.removerFavorito = function(prodId){
+  const user = getSession()
+  removeFromFavorites(user, prodId)
+  showToast('🗑️ Removido dos favoritos', 'info')
+  updateBadges()
+  favoritosPage()
+}
+
+function homePage(){
+  hideContainer()
+  const homeContent = document.getElementById('homeContent')
+  homeContent.innerHTML = `
+    <div class="header">
+      <div class="header-logo">DYVA<br><small>Moda Feminina</small></div>
+      <div class="search-bar">
+        <input placeholder="Buscar produtos..." id="searchInput" autocomplete="off">
+        <button id="btnBuscar">🔍</button>
+      </div>
+      <div class="header-icons">
+        <span id="loginIcon" style="cursor:pointer">👤</span>
+        <span id="cartIcon" style="cursor:pointer">🛒</span>
+        <span id="favIcon" style="cursor:pointer">❤️</span>
+      </div>
+    </div>
+    <div class="nav-menu">
+      <a id="navInicio">INÍCIO</a>
+      <a id="navProdutos">PRODUTOS</a>
+      <a id="navCarrinho">CARRINHO</a>
+    </div>
+    <div class="banner">
+      <h2>Nova Coleção<br>Verão 2025</h2>
+      <button id="btnConfira">Confira</button>
+    </div>
+    <div class="categorias">
+      <h3>Busque por Categorias</h3>
+      <div class="cat-grid">
+        <div class="cat-item" id="catMacaquinhos">Macaquinhos</div>
+        <div class="cat-item" id="catCroppeds">Croppeds</div>
+        <div class="cat-item" id="catSaias">Saias</div>
+        <div class="cat-item" id="catBlusas">Blusas</div>
+      </div>
+    </div>
+    <div class="destaques">
+      <h3 style="text-align:center;margin-bottom:8px;">Produtos</h3>
+      <div style="text-align:center;margin-bottom:10px;">
+        <select id="ordenar" style="padding:6px 12px;border:2px solid var(--border);border-radius:6px;background:var(--card-bg);color:var(--text);cursor:pointer;font-weight:500;transition:all 0.2s;box-shadow:0 2px 6px rgba(0,0,0,0.08);" onmouseover="this.style.borderColor='var(--pink)'" onmouseout="this.style.borderColor='var(--border)'">
+          <option value="">Ordenar por</option>
+          <option value="nome-asc">Nome (A-Z)</option>
+          <option value="nome-desc">Nome (Z-A)</option>
+          <option value="preco-asc">Menor Preço</option>
+          <option value="preco-desc">Maior Preço</option>
+        </select>
+      </div>
+      <div class="prod-grid" id="prodGrid"></div>
+    </div>
+  `
+  
+  // Carregar produtos na home (mostrar todos os produtos ativos)
+  const user = getSession()
+  let produtos = getProducts('admin@dyva.com') // Pega do catálogo central
+  const favoritos = user ? getFavorites(user) : []
+  
+  function renderProdutos(produtosParaRender) {
+    const grid = document.getElementById('prodGrid')
+    grid.innerHTML = produtosParaRender.map(p => {
+      const isFavorito = favoritos.includes(p.id)
+      return `
+        <div class="prod-card">
+          <button class="btn-fav" onclick="adicionarAoFavoritos(${p.id})" title="${isFavorito ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}" style="color:${isFavorito ? '#ff0080' : '#666'};">${isFavorito ? '❤️' : '🤍'}</button>
+          <img src="${p.img || 'https://via.placeholder.com/200x200?text=Produto'}">
+          <h4>${p.nome}</h4>
+          <p style="color:#666;font-size:12px;">${p.categoria || ''}</p>
+          <p style="font-weight:bold;color:#ff0080;font-size:16px;">R$ ${p.preco}</p>
+          <div class="prod-card-buttons">
+              <button class="btn" style="font-size:13px;padding:8px;flex:1;" onclick="abrirDetalheProduto(${p.id})">🛒 Ver detalhes</button>
+          </div>
+        </div>
+      `
+    }).join('')
+  }
+  
+  let produtosFiltrados = produtos
+  
+  if(produtos.length > 0) {
+    renderProdutos(produtos)
+    
+    // Busca em tempo real
+    const searchInput = document.getElementById('searchInput')
+    searchInput.oninput = (e) => {
+      const termo = e.target.value.trim().toLowerCase()
+      if(!termo) {
+        produtosFiltrados = produtos
+        renderProdutos(produtosFiltrados)
+        return
+      }
+      produtosFiltrados = produtos.filter(p => 
+        p.nome.toLowerCase().includes(termo) || 
+        (p.categoria && p.categoria.toLowerCase().includes(termo)) ||
+        (p.descricao && p.descricao.toLowerCase().includes(termo))
+      )
+      if(produtosFiltrados.length === 0) {
+        document.getElementById('prodGrid').innerHTML = `
+          <div style="grid-column:1/-1;text-align:center;padding:40px;">
+            <div style="font-size:48px;margin-bottom:15px;">🔍</div>
+            <h3 style="color:var(--gray);margin-bottom:8px;">Nenhum produto encontrado</h3>
+            <p style="color:var(--gray);">Tente buscar por outro termo</p>
+          </div>
+        `
+      } else {
+        renderProdutos(produtosFiltrados)
+      }
+    }
+    
+    // Botão de busca
+    document.getElementById('btnBuscar').onclick = () => {
+      searchInput.oninput({target: searchInput})
+    }
+    
+    // Enter para buscar
+    searchInput.onkeypress = (e) => {
+      if(e.key === 'Enter') searchInput.oninput(e)
+    }
+    
+    // Ordenação
+    document.getElementById('ordenar').onchange = (e) => {
+      const ordem = e.target.value
+      let produtosOrdenados = [...produtosFiltrados]
+      
+      if(ordem === 'nome-asc') {
+        produtosOrdenados.sort((a, b) => a.nome.localeCompare(b.nome))
+      } else if(ordem === 'nome-desc') {
+        produtosOrdenados.sort((a, b) => b.nome.localeCompare(a.nome))
+      } else if(ordem === 'preco-asc') {
+        produtosOrdenados.sort((a, b) => parseFloat(a.preco) - parseFloat(b.preco))
+      } else if(ordem === 'preco-desc') {
+        produtosOrdenados.sort((a, b) => parseFloat(b.preco) - parseFloat(a.preco))
+      }
+      
+      renderProdutos(produtosOrdenados)
+    }
+  } else {
+    const grid = document.getElementById('prodGrid')
+    grid.innerHTML = `
+      <div class="prod-card">
+        <img src="https://via.placeholder.com/200x200?text=Saia+Tweed">
+        <h4>Saia tweed e Blusa Longa</h4>
+        <p style="color:#999;">Cadastre produtos para ver aqui</p>
+      </div>
+      <div class="prod-card">
+        <img src="https://via.placeholder.com/200x200?text=Blusa+Xadrez">
+        <h4>Blusa Xadrez e Short Saia</h4>
+        <p style="color:#999;">Cadastre produtos para ver aqui</p>
+      </div>
+      <div class="prod-card">
+        <img src="https://via.placeholder.com/200x200?text=Cropped">
+        <h4>Cropped e Short Saia</h4>
+        <p style="color:#999;">Cadastre produtos para ver aqui</p>
+      </div>
+    `
+  }
+  
+  // Eventos
+  document.getElementById('loginIcon').onclick = () => {
+    if(getSession()) perfilPage()
+    else {
+      showContainer()
+      loginPage()
+    }
+  }
+  
+  document.getElementById('cartIcon').onclick = () => {
+    showContainer()
+    if(getSession()) carrinhoPage()
+    else {
+      showToast('Faça login para acessar o carrinho!','info')
+      setTimeout(()=>loginPage(), 1000)
+    }
+  }
+  
+  document.getElementById('navInicio').onclick = () => homePage()
+  
+  document.getElementById('navProdutos').onclick = () => {
+    document.querySelector('.destaques').scrollIntoView({behavior: 'smooth'})
+  }
+  
+  document.getElementById('navCarrinho').onclick = () => {
+    showContainer()
+    if(getSession()) carrinhoPage()
+    else {
+      showToast('Faça login para acessar o carrinho!','info')
+      setTimeout(()=>loginPage(), 1000)
+    }
+  }
+  
+  document.getElementById('btnConfira').onclick = () => {
+    document.querySelector('.destaques').scrollIntoView({behavior: 'smooth'})
+  }
+  
+  document.getElementById('favIcon').onclick = () => favoritosPage()
+  
+  // Atualizar badges
+  updateBadges()
+  
+  // Categorias
+  document.getElementById('catMacaquinhos').onclick = () => mostrarCategoria('Macaquinhos')
+  document.getElementById('catCroppeds').onclick = () => mostrarCategoria('Croppeds')
+  document.getElementById('catSaias').onclick = () => mostrarCategoria('Saias')
+  document.getElementById('catBlusas').onclick = () => mostrarCategoria('Blusas')
+}
+
+function mostrarCategoria(categoria){
+  const produtos = getProducts('admin@dyva.com').filter(p => p.categoria === categoria)
+  const user = getSession()
+  const favoritos = user ? getFavorites(user) : []
+  hideContainer()
+  const homeContent = document.getElementById('homeContent')
+  homeContent.innerHTML = `
+    <div class="header">
+      <div class="header-logo">DYVA<br><small>Moda Feminina</small></div>
+      <div class="search-bar">
+        <input placeholder="Buscar" id="searchInputCat">
+        <button id="btnBuscarCat">🔍</button>
+      </div>
+      <div class="header-icons">
+        <span id="loginIconCat" style="cursor:pointer">👤</span>
+        <span id="cartIconCat" style="cursor:pointer">🛒</span>
+        <span id="favIconCat" style="cursor:pointer">❤️</span>
+      </div>
+    </div>
+    <div class="nav-menu">
+      <a id="navInicioCat">INÍCIO</a>
+      <a id="navProdutosCat">PRODUTOS</a>
+      <a id="navCarrinhoCat">CARRINHO</a>
+    </div>
+    <div class="banner">
+      <h2>Nova Coleção<br>Verão 2025</h2>
+      <button id="btnConfiraCat">Confira</button>
+    </div>
+    <div style="padding:10px 20px 12px;background:var(--bg);">
+      <h2 style="text-align:center;margin-bottom:10px;font-size:18px;">${categoria} (${produtos.length})</h2>
+      <div class="prod-grid" style="max-width:850px;margin:0 auto;">
+        ${produtos.length === 0 ? '<p style="text-align:center;color:var(--gray);grid-column:1/-1;">Nenhum produto nesta categoria.</p>' : 
+          produtos.map(p => {
+            const isFavorito = favoritos.includes(p.id)
+            return `
+            <div class="prod-card">
+              <button class="btn-fav" onclick="adicionarAoFavoritos(${p.id})" title="${isFavorito ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}" style="color:${isFavorito ? '#ff0080' : '#666'};">${isFavorito ? '❤️' : '🤍'}</button>
+              <img src="${p.img || 'https://via.placeholder.com/200x200?text=Produto'}">
+              <h4>${p.nome}</h4>
+              <p style="color:var(--gray);font-size:12px;">${p.categoria || ''}</p>
+              <p style="font-weight:bold;color:#ff0080;font-size:16px;margin:5px 0;">R$ ${p.preco}</p>
+              <button class="btn" style="font-size:13px;padding:8px;margin-top:8px;width:100%;" onclick="abrirDetalheProduto(${p.id})">🛒 Ver detalhes</button>
+            </div>
+          `}).join('')
+        }
+      </div>
+    </div>
+  `
+  document.getElementById('navInicioCat').onclick = () => homePage()
+  document.getElementById('navProdutosCat').onclick = () => {
+    homePage()
+    setTimeout(()=>document.querySelector('.destaques')?.scrollIntoView({behavior:'smooth'}), 100)
+  }
+  document.getElementById('navCarrinhoCat').onclick = () => {showContainer();carrinhoPage()}
+  document.getElementById('cartIconCat').onclick = () => {showContainer();carrinhoPage()}
+  document.getElementById('favIconCat').onclick = () => favoritosPage()
+  document.getElementById('loginIconCat').onclick = () => {showContainer();if(getSession()) perfilPage();else loginPage()}
+  document.getElementById('btnConfiraCat').onclick = () => {
+    homePage()
+    setTimeout(()=>document.querySelector('.destaques')?.scrollIntoView({behavior:'smooth'}), 100)
+  }
+  
+  // Buscar nessa categoria
+  document.getElementById('btnBuscarCat').onclick = () => {
+    const termo = document.getElementById('searchInputCat').value.trim().toLowerCase()
+    if(!termo) return
+    const todosProdutos = getProducts('admin@dyva.com')
+    const resultados = todosProdutos.filter(p => 
+      p.nome.toLowerCase().includes(termo) || 
+      (p.categoria && p.categoria.toLowerCase().includes(termo))
+    )
+    mostrarResultados(resultados)
+  }
+  updateBadges()
+}
+
+function perfilPage(){
+  showContainer()
+  const user = getSession()
+  const isAdmin = user === 'admin@dyva.com'
+  const pedidos = getPedidos(user)
+  
+  root.innerHTML=`
+    <h1>Meu Perfil</h1>
+    <div class='link-row'><span>${user}</span><span class='text-link' id='sair'>Sair</span></div>
+    
+    ${isAdmin ? `
+    <div style='border:2px solid #ff0080;padding:15px;border-radius:8px;margin:20px 0;background:var(--card-bg);'>
+      <h3 style='color:#ff0080;margin-bottom:10px;'>⚙️ Área de Administração</h3>
+      <div style='display:flex;gap:8px;flex-wrap:wrap;'>
+        <button class='btn' id='btnAdmin' style='flex:1;min-width:120px;'>📦 Produtos</button>
+        <button class='btn' id='btnDashboard' style='background:#2196f3;flex:1;min-width:120px;'>📊 Dashboard</button>
+        <button class='btn' id='btnCupons' style='background:#ff9800;flex:1;min-width:120px;'>🎁 Cupons</button>
+      </div>
+    </div>
+    ` : ''}
+    
+    <div style='border:1px solid var(--border);padding:15px;border-radius:8px;margin:20px 0;background:var(--card-bg);'>
+      <h3 style='margin-bottom:15px;color:var(--text);'>Minha Conta</h3>
+      <button class='btn' id='btnCarrinho' style='margin-top:10px;'>🛒 Meu Carrinho</button>
+      <button class='btn' id='btnFavoritos' style='margin-top:10px;background:#e91e63;'>❤️ Meus Favoritos</button>
+    </div>
+    
+    <div style='border:1px solid var(--border);padding:15px;border-radius:8px;margin:20px 0;background:var(--card-bg);'>
+      <h3 style='margin-bottom:15px;color:var(--text);'>📦 Meus Pedidos</h3>
+      ${pedidos.length === 0 ? '<p class="small" style="color:var(--gray);">Você ainda não fez nenhum pedido.</p>' : 
+        pedidos.reverse().map((p, idx) => {
+          // Usar status salvo no pedido ou 'Pedido Recebido' como padrão
+          const status = p.status || 'Pedido Recebido'
+          const statusColors = {
+            'Pedido Recebido': '#ff9800',
+            'Em Preparação': '#2196f3', 
+            'Em Transporte': '#9c27b0',
+            'Entregue': '#4caf50'
+          }
+          const statusIcons = {
+            'Pedido Recebido': '📋',
+            'Em Preparação': '📦',
+            'Em Transporte': '🚚',
+            'Entregue': '✅'
+          }
+          
+          return `
+          <div style='border:2px solid var(--border);padding:15px;margin:15px 0;border-radius:10px;background:var(--bg);cursor:pointer;transition:all 0.2s;' onmouseover='this.style.borderColor="var(--pink)"' onmouseout='this.style.borderColor="var(--border)"' onclick='verDetalhesPedido(${JSON.stringify(p).replace(/'/g, "&apos;")})'>
+            <div style='display:flex;justify-content:space-between;margin-bottom:12px;align-items:center;'>
+              <div>
+                <b style='color:var(--text);font-size:16px;'>Pedido #${String(p.id).slice(-6)}</b>
+                <p class='small' style='color:var(--gray);margin-top:3px;'>${p.data}</p>
+              </div>
+              <span style='background:${statusColors[status]};color:white;padding:6px 14px;border-radius:20px;font-size:12px;font-weight:bold;'>${statusIcons[status]} ${status}</span>
+            </div>
+            
+            <div style='background:var(--card-bg);padding:12px;border-radius:6px;margin-bottom:10px;'>
+              <p style='color:var(--text);font-size:13px;margin-bottom:6px;'><b>${p.produtos.length}</b> ${p.produtos.length === 1 ? 'item' : 'itens'}</p>
+              <div style='display:flex;gap:8px;overflow-x:auto;padding:4px 0;'>
+                ${p.produtos.slice(0,3).map(prod => `
+                  <img src='${prod.img || 'https://via.placeholder.com/60'}' style='width:50px;height:50px;object-fit:cover;border-radius:6px;border:1px solid var(--border);'>
+                `).join('')}
+                ${p.produtos.length > 3 ? `<div style='width:50px;height:50px;display:flex;align-items:center;justify-content:center;background:var(--border);border-radius:6px;color:var(--text);font-size:12px;font-weight:600;'>+${p.produtos.length - 3}</div>` : ''}
+              </div>
+            </div>
+            
+            <div style='display:flex;justify-content:space-between;align-items:center;padding-top:10px;border-top:1px solid var(--border);'>
+              <div>
+                <p style='color:var(--gray);font-size:12px;margin-bottom:2px;'>Pagamento: ${p.pagamento === 'pix' ? '💠 Pix' : p.pagamento === 'cartao' ? '💳 Cartão' : '📄 Boleto'}</p>
+                ${p.cupom ? `<p style='color:#00d959;font-size:11px;'>🎁 Cupom: ${p.cupom}</p>` : ''}
+              </div>
+              <div style='text-align:right;'>
+                <p style='color:var(--gray);font-size:12px;'>Total</p>
+                <p style='color:var(--pink);font-size:20px;font-weight:700;'>R$ ${p.total}</p>
+              </div>
+            </div>
+            
+            <p style='color:var(--pink);font-size:12px;text-align:center;margin-top:10px;font-weight:600;'>👆 Clique para ver detalhes</p>
+          </div>
+        `}).join('')
+      }
+    </div>
+    
+    <button class='btn btn-voltar' id='voltarHome'>Voltar à Home</button>
+  `
+  
+  $('#sair').onclick = () => {
+    logout()
+    homePage()
+  }
+  
+  if(isAdmin){
+    $('#btnAdmin').onclick = () => productPage()
+    $('#btnDashboard').onclick = () => dashboardPage()
+    $('#btnCupons').onclick = () => cuponsPage()
+  }
+  
+  $('#btnCarrinho').onclick = () => carrinhoPage()
+  $('#btnFavoritos').onclick = () => favoritosPage()
+  $('#voltarHome').onclick = () => homePage()
+  
+  // Carregar tema salvo
+  const savedTheme = localStorage.getItem('dyva_theme')
+  if(savedTheme === 'dark') {
+    document.body.classList.add('dark-mode')
+    $('.theme-toggle').textContent = '☀️'
+  }
+}
+
+function verDetalhesPedido(pedido) {
+  showContainer()
+  const statuses = ['Pedido Recebido', 'Em Preparação', 'Em Transporte', 'Entregue']
+  
+  // Não altera status automaticamente ao abrir.
+  // Usa SEMPRE o status salvo no pedido para manter consistência visual.
+  const currentStatusIndex = (typeof pedido.statusIndex === 'number') ? pedido.statusIndex : 0
+  
+  root.innerHTML = `
+    <h1>Detalhes do Pedido</h1>
+    <div style='background:var(--card-bg);padding:20px;border-radius:10px;border:2px solid var(--border);margin-bottom:20px;'>
+      <div style='display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;'>
+        <div>
+          <h2 style='color:var(--text);margin:0;'>Pedido #${String(pedido.id).slice(-6)}</h2>
+          <p style='color:var(--gray);font-size:14px;margin-top:5px;'>${pedido.data}</p>
+        </div>
+        <button class='btn' onclick='perfilPage()'>← Voltar</button>
+      </div>
+      
+      <!-- Timeline de Status -->
+      <div style='margin:30px 0;'>
+        <h3 style='color:var(--text);margin-bottom:20px;'>📍 Acompanhamento do Pedido</h3>
+        <div style='display:flex;justify-content:space-between;position:relative;'>
+          ${statuses.map((s, i) => {
+            const isActive = i <= currentStatusIndex
+            const icons = ['📋', '📦', '🚚', '✅']
+            return `
+              <div style='flex:1;text-align:center;position:relative;z-index:2;'>
+                <div style='width:50px;height:50px;border-radius:50%;background:${isActive ? 'var(--pink)' : 'var(--border)'};color:white;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:20px;transition:all 0.3s;box-shadow:${isActive ? '0 4px 12px rgba(255,0,128,0.3)' : 'none'};'>${icons[i]}</div>
+                <p style='color:${isActive ? 'var(--text)' : 'var(--gray)'};font-size:12px;font-weight:${isActive ? '600' : '400'};'>${s}</p>
+                ${i === currentStatusIndex ? `<p style='color:var(--pink);font-size:11px;margin-top:3px;'>Atual</p>` : ''}
+              </div>
+            `
+          }).join('')}
+          <div style='position:absolute;top:25px;left:10%;right:10%;height:3px;background:var(--border);z-index:1;'>
+            <div style='height:100%;background:var(--pink);width:${(currentStatusIndex / 3) * 100}%;transition:width 0.5s;'></div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Produtos do Pedido -->
+      <div style='margin-top:25px;'>
+        <h3 style='color:var(--text);margin-bottom:15px;'>🛍️ Itens do Pedido</h3>
+        ${pedido.produtos.map(p => `
+          <div style='display:flex;gap:15px;padding:12px;background:var(--bg);border-radius:8px;border:1px solid var(--border);margin-bottom:10px;'>
+            <img src='${p.img || 'https://via.placeholder.com/80'}' style='width:80px;height:80px;object-fit:cover;border-radius:6px;'>
+            <div style='flex:1;'>
+              <h4 style='color:var(--text);margin:0 0 5px 0;font-size:15px;'>${p.nome}</h4>
+              <p style='color:var(--gray);font-size:13px;margin-bottom:5px;'>${p.categoria || ''}</p>
+              ${p.tamanho ? `<span style='background:var(--pink);color:white;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;'>${p.tamanho}</span>` : ''}
+              <p style='color:var(--text);font-weight:600;margin-top:8px;'>Qtd: ${p.qty || 1}</p>
+            </div>
+            <div style='text-align:right;'>
+              <p style='color:var(--pink);font-size:18px;font-weight:700;'>R$ ${(parseFloat(p.preco) * (p.qty || 1)).toFixed(2)}</p>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+      
+      <!-- Resumo de Valores -->
+      <div style='background:var(--bg);padding:15px;border-radius:8px;margin-top:20px;'>
+        <h3 style='color:var(--text);margin-bottom:12px;'>💰 Resumo de Valores</h3>
+        <div style='display:flex;justify-content:space-between;margin-bottom:8px;'>
+          <span style='color:var(--gray);'>Subtotal:</span>
+          <span style='color:var(--text);font-weight:600;'>R$ ${pedido.subtotal || pedido.total}</span>
+        </div>
+        ${pedido.desconto && parseFloat(pedido.desconto) > 0 ? `
+          <div style='display:flex;justify-content:space-between;margin-bottom:8px;'>
+            <span style='color:#00d959;'>Desconto ${pedido.cupom ? '(' + pedido.cupom + ')' : ''}:</span>
+            <span style='color:#00d959;font-weight:600;'>- R$ ${pedido.desconto}</span>
+          </div>
+        ` : ''}
+        <div style='display:flex;justify-content:space-between;margin-bottom:8px;'>
+          <span style='color:var(--gray);'>Frete:</span>
+          <span style='color:var(--text);font-weight:600;'>${pedido.frete && parseFloat(pedido.frete) === 0 ? 'GRÁTIS' : 'R$ ' + (pedido.frete || '15,00')}</span>
+        </div>
+        <div style='display:flex;justify-content:space-between;padding-top:10px;border-top:2px solid var(--border);margin-top:10px;'>
+          <span style='color:var(--text);font-size:18px;font-weight:700;'>Total:</span>
+          <span style='color:var(--pink);font-size:22px;font-weight:700;'>R$ ${pedido.total}</span>
+        </div>
+      </div>
+      
+      <!-- Endereço de Entrega -->
+      <div style='background:var(--bg);padding:15px;border-radius:8px;margin-top:15px;'>
+        <h3 style='color:var(--text);margin-bottom:12px;'>📍 Endereço de Entrega</h3>
+        <p style='color:var(--text);line-height:1.6;'>
+          ${pedido.endereco.nome}<br>
+          ${pedido.endereco.rua}, ${pedido.endereco.numero}<br>
+          ${pedido.endereco.bairro} - ${pedido.endereco.cidade}/${pedido.endereco.estado}<br>
+          CEP: ${pedido.endereco.cep}<br>
+          Telefone: ${pedido.endereco.telefone}
+        </p>
+      </div>
+      
+      <!-- Forma de Pagamento -->
+      <div style='background:var(--bg);padding:15px;border-radius:8px;margin-top:15px;'>
+        <h3 style='color:var(--text);margin-bottom:12px;'>💳 Forma de Pagamento</h3>
+        <p style='color:var(--text);'>
+          ${pedido.pagamento === 'pix' ? '💠 Pix - Pagamento instantâneo' : pedido.pagamento === 'cartao' ? '💳 Cartão de Crédito/Débito' : '📄 Boleto Bancário'}
+        </p>
+      </div>
+    </div>
+    
+    <button class='btn btn-voltar' onclick='perfilPage()'>← Voltar aos Meus Pedidos</button>
+  `
+}
+
+function toggleTheme() {
+  document.body.classList.toggle('dark-mode')
+  const isDark = document.body.classList.contains('dark-mode')
+  localStorage.setItem('dyva_theme', isDark ? 'dark' : 'light')
+  $('.theme-toggle').textContent = isDark ? '☀️' : '🌙'
+}
+
+function showToast(message, type = 'success') {
+  const toast = document.createElement('div')
+  toast.className = `toast ${type}`
+  toast.innerHTML = `
+    <span style="font-size:20px;">${type === 'success' ? '✓' : type === 'error' ? '✕' : type === 'loading' ? '⟳' : 'ℹ'}</span>
+    <span>${message}</span>
+  `
+  document.body.appendChild(toast)
+  
+  if(type !== 'loading'){
+    setTimeout(() => {
+      toast.style.animation = 'slideOut 0.3s ease'
+      setTimeout(() => toast.remove(), 300)
+    }, 3000)
+  }
+  return toast
+}
+
+function updateBadges() {
+  const user = getSession()
+  if(!user) return
+  
+  const cartCount = getCart(user).reduce((sum, item) => sum + item.qty, 0)
+  const favCount = getFavorites(user).length
+  
+  // Atualiza badges em todos os headers
+  document.querySelectorAll('[id^="cartIcon"]').forEach(icon => {
+    let badge = icon.querySelector('.badge')
+    if(cartCount > 0) {
+      if(!badge) {
+        badge = document.createElement('span')
+        badge.className = 'badge'
+        icon.appendChild(badge)
+      }
+      badge.textContent = cartCount
+    } else if(badge) {
+      badge.remove()
+    }
+  })
+  
+  document.querySelectorAll('[id^="favIcon"]').forEach(icon => {
+    let badge = icon.querySelector('.badge')
+    if(favCount > 0) {
+      if(!badge) {
+        badge = document.createElement('span')
+        badge.className = 'badge'
+        icon.appendChild(badge)
+      }
+      badge.textContent = favCount
+    } else if(badge) {
+      badge.remove()
+    }
+  })
+}
+
+function loginPage(){
+  showContainer()
+  root.innerHTML=`
+    <h1>Login</h1>
+    <input id='loginEmail' class='input' placeholder='Email'>
+    <div style='position:relative;'>
+      <input id='loginPass' class='input' placeholder='Senha' type='password'>
+      <button id='toggleLoginPass' type='button' style='position:absolute;right:10px;top:50%;transform:translateY(-50%);background:transparent;border:none;color:var(--gray);cursor:pointer;'>👁️</button>
+    </div>
+    <div class='link-row'>
+      <span class='text-link' id='newAcc'>Crie sua conta</span>
+      <span class='text-link' id='forgotPass'>Esqueceu sua senha?</span>
+    </div>
+    <button class='btn' id='logBtn'>Entrar</button>
+    <p class='muted-center'><span id='voltarHome' class='text-link'>Voltar à Home</span></p>`
+  $('#logBtn').onclick=()=>{
+    const email=$('#loginEmail').value.trim()
+    const pass=$('#loginPass').value
+    const user=findUser(email)
+    if(!user || user.senha!==pass){showToast('Email ou senha incorretos!', 'error');return}
+    setSession(email)
+    showToast('Bem-vindo de volta! 👋', 'success')
+    updateBadges()
+    
+    // Admin vai para painel de produtos, usuários comuns vão para perfil
+    if(email === 'admin@dyva.com'){
+      productPage()
+    } else {
+      perfilPage()
+    }
+  }
+  $('#newAcc').onclick=()=>registerPage()
+  $('#forgotPass').onclick=()=>showResetModal()
+  $('#voltarHome').onclick=()=>homePage()
+  // Mostrar/ocultar senha (login)
+  $('#toggleLoginPass').onclick = () => {
+    const inp = $('#loginPass')
+    const isPwd = inp.type === 'password'
+    inp.type = isPwd ? 'text' : 'password'
+    $('#toggleLoginPass').textContent = isPwd ? '🙈' : '👁️'
+  }
+}
+
+function registerPage(){
+  showContainer()
+  root.innerHTML=`
+    <h1>Crie sua Conta</h1>
+    <input id='regEmail' class='input' placeholder='Email'>
+    <div style='position:relative;'>
+      <input id='regPass' class='input' placeholder='Senha' type='password'>
+      <button id='toggleRegPass' type='button' style='position:absolute;right:10px;top:50%;transform:translateY(-50%);background:transparent;border:none;color:var(--gray);cursor:pointer;'>👁️</button>
+    </div>
+    <div style='position:relative;'>
+      <input id='regPass2' class='input' placeholder='Confirme sua Senha' type='password'>
+      <button id='toggleRegPass2' type='button' style='position:absolute;right:10px;top:50%;transform:translateY(-50%);background:transparent;border:none;color:var(--gray);cursor:pointer;'>👁️</button>
+    </div>
+    <button class='btn' id='btnCriar'>Criar Conta</button>
+    <p class='muted-center'>Já tem conta? <span id='voltarLogin' class='text-link'>Faça Login</span></p>
+    <p class='muted-center'><span id='voltarHome2' class='text-link'>Voltar à Home</span></p>`
+  $('#voltarLogin').onclick=()=>loginPage()
+  $('#voltarHome2').onclick=()=>homePage()
+  $('#btnCriar').onclick=()=>{
+    const email=$('#regEmail').value.trim()
+    const p1=$('#regPass').value
+    const p2=$('#regPass2').value
+    if(!email||!p1||!p2){showToast('Preencha todos os campos!','error');return}
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){showToast('Email inválido!','error');return}
+    if(p1.length<6){showToast('Senha deve ter no mínimo 6 caracteres!','error');return}
+    if(p1!==p2){showToast('As senhas não conferem!','error');return}
+    if(findUser(email)){showToast('Este email já está cadastrado!','error');return}
+    addUser({email:email,senha:p1})
+    showToast('Conta criada com sucesso! 🎉','success')
+    setTimeout(()=>loginPage(), 1500)
+  }
+  // Mostrar/ocultar senha (registro)
+  $('#toggleRegPass').onclick = () => {
+    const inp = $('#regPass')
+    const isPwd = inp.type === 'password'
+    inp.type = isPwd ? 'text' : 'password'
+    $('#toggleRegPass').textContent = isPwd ? '🙈' : '👁️'
+  }
+  $('#toggleRegPass2').onclick = () => {
+    const inp = $('#regPass2')
+    const isPwd = inp.type === 'password'
+    inp.type = isPwd ? 'text' : 'password'
+    $('#toggleRegPass2').textContent = isPwd ? '🙈' : '👁️'
+  }
+}
+
+function productPage(){
+  showContainer()
+  const user=getSession()
+  if(!user){loginPage();return}
+  
+  // APENAS ADMIN pode gerenciar produtos
+  if(user !== 'admin@dyva.com'){
+    showToast('Acesso negado! Apenas administradores podem gerenciar produtos.','error')
+    setTimeout(()=>perfilPage(), 1000)
+    return
+  }
+  
+  const produtos=getProducts(user)
+  root.innerHTML=`
+  <h1>Produtos</h1>
+  <div class='link-row'><span>${user}</span><span class='text-link' id='sair'>Sair</span></div>
+  <div style='border:1px solid var(--border);padding:10px;border-radius:4px;margin-top:10px;background:var(--card-bg);'>
+    <b style='color:var(--text);'>Adicionar Produto</b><br>
+    <input id='pNome' class='input' placeholder='Nome do produto'>
+    <textarea id='pDescricao' class='input' placeholder='Descrição do produto (opcional)' style='resize:vertical;min-height:60px;font-family:inherit;'></textarea>
+    <input id='pPreco' class='input' placeholder='Preço'>
+    <select id='pCategoria' class='input'>
+      <option value=''>Selecione a categoria</option>
+      <option value='Macaquinhos'>Macaquinhos</option>
+      <option value='Croppeds'>Croppeds</option>
+      <option value='Saias'>Saias</option>
+      <option value='Blusas'>Blusas</option>
+    </select>
+    <input id='pImg' class='input' placeholder='URL da imagem (opcional)'>
+    <button class='btn' id='addP'>Adicionar Produto</button>
+  </div>
+  <div id='lista' class='product-list'></div>
+  <button class='btn' id='verCarrinho'>Ir para o Carrinho</button>
+  <button class='btn' id='voltarPerfil' style='background:#e91e63;'>Voltar ao Perfil</button>
+  <button class='btn btn-voltar' id='voltarHome'>Voltar à Home</button>`
+  $('#sair').onclick=()=>{logout();homePage()}
+  $('#voltarHome').onclick=()=>homePage()
+  $('#voltarPerfil').onclick=()=>perfilPage()
+  $('#addP').onclick=()=>{
+    const nome=$('#pNome').value.trim()
+    const descricao=$('#pDescricao').value.trim()
+    let preco=$('#pPreco').value.trim().replace(',','.') // Aceita vírgula e converte para ponto
+    const categoria=$('#pCategoria').value
+    const img=$('#pImg').value.trim()
+    if(!nome||!preco||!categoria){showToast('Preencha nome, preço e categoria!','error');return}
+    if(isNaN(preco)||preco<=0){showToast('Preço deve ser um número válido!','error');return}
+    preco = parseFloat(preco).toFixed(2) // Formata para 2 casas decimais
+    produtos.push({id:Date.now(),nome,descricao,preco,categoria,img,tamanhos:['PP','P','M','G','GG']})
+    saveProducts(user,produtos)
+    showToast('Produto adicionado com sucesso! ✅','success')
+    $('#pNome').value='';$('#pDescricao').value='';$('#pPreco').value='';$('#pCategoria').value='';$('#pImg').value='';
+    renderList(produtos,user)
+  }
+  $('#verCarrinho').onclick=()=>carrinhoPage()
+  renderList(produtos,user)
+}
+
+function renderList(produtos,user){
+  const lista=$('#lista')
+  lista.innerHTML=''
+  if(produtos.length==0){lista.innerHTML='<p class="small" style="color:var(--gray);">Nenhum produto cadastrado.</p>';return}
+  produtos.forEach(p=>{
+    const div=document.createElement('div')
+    div.className='product'
+    div.innerHTML=`
+      <div style='display:flex;align-items:center;gap:10px;'>
+        <img src='${p.img||'https://via.placeholder.com/60?text=Sem+Img'}'>
+        <div><div class='name' style='color:var(--text);'>${p.nome}</div><div class='small' style='color:var(--gray);'>R$ ${p.preco}</div></div>
+      </div>
+      <button class='btn-delete' data-id='${p.id}'>Excluir</button>`
+    lista.appendChild(div)
+  })
+  document.querySelectorAll('.btn-delete').forEach(btn=>{
+    btn.onclick=()=>{
+      const id=Number(btn.getAttribute('data-id'))
+      const novos=produtos.filter(p=>p.id!==id)
+      saveProducts(user,novos)
+      renderList(novos,user)
+    }
+  })
+}
+
+/* ==== Nova Tela: Carrinho ==== */
+function carrinhoPage(){
+  showContainer()
+  const user=getSession()
+  const cartItems=getCart(user)
+  // Buscar produtos sempre do admin (catálogo central)
+  const todosProdutos=getProducts('admin@dyva.com')
+  
+  if(cartItems.length==0){
+    root.innerHTML=`
+      <h1>Carrinho de Compras</h1>
+      <div style='text-align:center;padding:40px 20px;'>
+        <div style='font-size:60px;margin-bottom:15px;'>🛒</div>
+        <h3 style='color:var(--gray);margin-bottom:10px;'>Seu carrinho está vazio</h3>
+        <p class='small' style='color:var(--gray);'>Adicione produtos para começar suas compras!</p>
+      </div>
+      <button class='btn' id='irProdutos'>Ver Produtos</button>
+      <button class='btn btn-voltar' id='voltar'>Voltar à Home</button>`
+    $('#voltar').onclick=()=>homePage()
+    $('#irProdutos').onclick=()=>{
+      homePage()
+      setTimeout(()=>document.querySelector('.destaques')?.scrollIntoView({behavior:'smooth'}), 100)
+    }
+    return
+  }
+  
+  // Limpar produtos que não existem mais (foram deletados pelo admin)
+  const produtosValidos = cartItems.filter(item => todosProdutos.find(p => p.id === item.id))
+  if(produtosValidos.length !== cartItems.length){
+    saveCart(user, produtosValidos)
+  }
+  
+  let total=0
+  const rows = produtosValidos.map(item => {
+    const p = todosProdutos.find(prod => prod.id === item.id)
+    const subtotal = parseFloat(p.preco) * item.qty
+    total += subtotal
+    return `
+    <tr style='background:var(--bg);'>
+      <td style='color:var(--text);padding:10px!important;'>
+        <div style='display:flex;align-items:center;gap:10px;max-width:100%;'>
+          <img src='${p.img||'https://via.placeholder.com/70?text=Sem+Img'}' style='width:50px;height:50px;object-fit:cover;border-radius:5px;flex-shrink:0;'>
+          <span style='text-align:left;font-size:12px;overflow:hidden;text-overflow:ellipsis;line-height:1.3;'>${p.nome}</span>
+        </div>
+      </td>
+      <td style='color:var(--text);font-weight:600;'>${item.tamanho || '-'}</td>
+      <td style='color:var(--text);'>R$ ${p.preco}</td>
+      <td style='color:var(--text);'>
+        <button onclick="changeQty(${p.id}, '${item.tamanho || ''}', -1)" style="padding:5px 10px;cursor:pointer;background:var(--card-bg);color:var(--text);border:1px solid var(--border);border-radius:4px;">-</button>
+        <span style="margin:0 10px;font-weight:600;">${item.qty}</span>
+        <button onclick="changeQty(${p.id}, '${item.tamanho || ''}', 1)" style="padding:5px 10px;cursor:pointer;background:var(--card-bg);color:var(--text);border:1px solid var(--border);border-radius:4px;">+</button>
+      </td>
+      <td style='color:var(--text);font-weight:600;'>R$ ${subtotal.toFixed(2)}</td>
+      <td><button class='btn-small' data-id='${p.id}' data-tam='${item.tamanho || ''}'>Excluir</button></td>
+    </tr>`
+  }).join('')
+  
+  root.innerHTML=`
+  <h1>Carrinho de Compras</h1>
+  <div class='link-row'><span style='color:var(--text);'>${user}</span><span class='text-link' id='irPerfil'>Meu Perfil</span></div>
+  <div style='overflow-x:auto;'>
+    <table style='background:var(--card-bg);min-width:600px;'>
+      <colgroup>
+        <col style='width:40%;'>
+        <col style='width:10%;'>
+        <col style='width:15%;'>
+        <col style='width:20%;'>
+        <col style='width:15%;'>
+        <col style='width:10%;'>
+      </colgroup>
+      <tr style='background:var(--card-bg);'><th style='color:var(--text);'>Produto</th><th style='color:var(--text);'>Tam.</th><th style='color:var(--text);'>Preço</th><th style='color:var(--text);'>Quantidade</th><th style='color:var(--text);'>Subtotal</th><th style='color:var(--text);'>Ações</th></tr>
+      ${rows}
+    </table>
+  </div>
+  <div class='resumo' style='color:var(--text);'>Total: R$ ${total.toFixed(2)}</div>
+  <button class='btn' id='continuar'>Finalizar Compra</button>
+  <button class='btn btn-voltar' id='voltar'>Voltar à Home</button>`
+  $('#voltar').onclick=()=>homePage()
+  $('#irPerfil').onclick=()=>perfilPage()
+  $('#continuar').onclick=()=>{
+    if(cartItems.length === 0){
+      showToast('Adicione produtos ao carrinho primeiro!','info')
+      return
+    }
+    finalizarPage()
+  }
+  document.querySelectorAll('.btn-small').forEach(btn=>{
+    btn.onclick=()=>{
+      const id=Number(btn.getAttribute('data-id'))
+      const tam=btn.getAttribute('data-tam')||null
+      removeFromCart(user,id,tam)
+      showToast('🗑️ Item removido do carrinho', 'info')
+      updateBadges()
+      carrinhoPage()
+    }
+  })
+}
+
+window.changeQty = function(prodId, tamanho, change){
+  const user = getSession()
+  const cart = getCart(user)
+  const item = cart.find(c => c.id === prodId && (tamanho ? c.tamanho === tamanho : true))
+  if(item){
+    // Salvar posição do scroll antes de atualizar
+    const scrollPos = window.scrollY || document.documentElement.scrollTop
+    
+    updateQty(user, prodId, item.qty + change, tamanho)
+    updateBadges()
+    carrinhoPage()
+    
+    // Restaurar posição do scroll após a atualização
+    requestAnimationFrame(() => {
+      window.scrollTo(0, scrollPos)
+    })
+  }
+}
+
+/* ==== Nova Tela: Finalização ==== */
+function finalizarPage(){
+  showContainer()
+  
+  // Calcular total do carrinho
+  const user = getSession()
+  const cartItems = getCart(user)
+  const todosProdutos = getProducts('admin@dyva.com')
+  let subtotal = 0
+  cartItems.forEach(item => {
+    const produto = todosProdutos.find(p => p.id === item.id)
+    if(produto) subtotal += parseFloat(produto.preco) * item.qty
+  })
+  
+  root.innerHTML=`
+  <h1>Finalização do Pedido</h1>
+  <div class='form-grid'>
+    <input id='fNome' class='input' placeholder='Nome' required>
+    <input id='fTelefone' class='input' placeholder='Número de Telefone' type='tel' pattern='[0-9]*' required>
+    <input id='fCEP' class='input' placeholder='CEP' type='tel' pattern='[0-9]*' maxlength='8' required>
+    <input id='fEstado' class='input' placeholder='Estado' required>
+    <input id='fCidade' class='input' placeholder='Cidade' required>
+    <input id='fBairro' class='input' placeholder='Bairro' required>
+    <input id='fRua' class='input' placeholder='Rua' required>
+    <input id='fNumero' class='input' placeholder='Número' type='tel' pattern='[0-9]*' required>
+  </div>
+  
+  <div style='background:var(--card-bg);padding:20px;border-radius:8px;border:2px solid var(--border);margin:20px 0;'>
+    <b style='color:var(--text);display:block;margin-bottom:10px;font-size:16px;'>🎁 Cupom de Desconto</b>
+    <div style='display:flex;gap:10px;'>
+      <input id='fCupom' class='input' placeholder='Digite seu cupom' style='flex:1;text-transform:uppercase;'>
+      <button class='btn' id='btnAplicarCupom' style='width:auto;padding:0 20px;'>Aplicar</button>
+    </div>
+    <div id='cupomFeedback' style='margin-top:10px;'></div>
+    <div id='resumoValores' style='margin-top:15px;padding-top:15px;border-top:1px solid var(--border);'>
+      <div style='display:flex;justify-content:space-between;margin-bottom:8px;'>
+        <span style='color:var(--gray);'>Subtotal:</span>
+        <span style='color:var(--text);font-weight:600;' id='spanSubtotal'>R$ ${subtotal.toFixed(2)}</span>
+      </div>
+      <div id='linhaDesconto' style='display:none;margin-bottom:8px;'>
+        <div style='display:flex;justify-content:space-between;'>
+          <span style='color:#00d959;'>Desconto (<span id='nomeCupom'></span>):</span>
+          <span style='color:#00d959;font-weight:600;' id='spanDesconto'>- R$ 0,00</span>
+        </div>
+      </div>
+      <div style='display:flex;justify-content:space-between;margin-bottom:8px;'>
+        <span style='color:var(--gray);'>Frete:</span>
+        <span style='color:var(--text);font-weight:600;' id='spanFrete'>R$ 15,00</span>
+      </div>
+      <div style='display:flex;justify-content:space-between;padding-top:10px;border-top:2px solid var(--border);'>
+        <span style='color:var(--text);font-size:18px;font-weight:700;'>Total:</span>
+        <span style='color:var(--pink);font-size:20px;font-weight:700;' id='spanTotal'>R$ ${(subtotal + 15).toFixed(2)}</span>
+      </div>
+    </div>
+  </div>
+  
+  <div class='pagamento'>
+    <b style='color:var(--text);display:block;margin-bottom:10px;font-size:16px;'>💳 Forma de Pagamento</b>
+    <label style='color:var(--text);display:block;margin:8px 0;cursor:pointer;padding:10px;border:2px solid var(--border);border-radius:8px;transition:all 0.2s;' onmouseover='this.style.borderColor="var(--pink)"' onmouseout='this.style.borderColor="var(--border)"'>
+      <input type='radio' name='pg' value='pix' checked onchange='mostrarCamposPagamento("pix")'> 
+      <span style='font-weight:600;'>💠 Pix</span> - Instantâneo
+    </label>
+    <label style='color:var(--text);display:block;margin:8px 0;cursor:pointer;padding:10px;border:2px solid var(--border);border-radius:8px;transition:all 0.2s;' onmouseover='this.style.borderColor="var(--pink)"' onmouseout='this.style.borderColor="var(--border)"'>
+      <input type='radio' name='pg' value='cartao' onchange='mostrarCamposPagamento("cartao")'> 
+      <span style='font-weight:600;'>💳 Cartão de Crédito/Débito</span> - À vista ou parcelado
+    </label>
+    <label style='color:var(--text);display:block;margin:8px 0;cursor:pointer;padding:10px;border:2px solid var(--border);border-radius:8px;transition:all 0.2s;' onmouseover='this.style.borderColor="var(--pink)"' onmouseout='this.style.borderColor="var(--border)"'>
+      <input type='radio' name='pg' value='boleto' onchange='mostrarCamposPagamento("boleto")'> 
+      <span style='font-weight:600;'>📄 Boleto Bancário</span> - Vencimento em 3 dias
+    </label>
+  </div>
+  
+  <div id='camposPagamento' style='margin-top:20px;'></div>
+  
+  <button class='btn' id='finalizarPedido'>Finalizar Pedido</button>
+  <button class='btn btn-voltar' id='voltarCarrinho'>Voltar ao Carrinho</button>`
+  $('#voltarCarrinho').onclick=()=>carrinhoPage()
+  
+  // Validação apenas números
+  $('#fTelefone').oninput = (e) => e.target.value = e.target.value.replace(/[^0-9]/g,'')
+  $('#fCEP').oninput = (e) => {
+    e.target.value = e.target.value.replace(/[^0-9]/g,'')
+    if(e.target.value.length === 8){
+      buscarCEP(e.target.value)
+    }
+  }
+  $('#fNumero').oninput = (e) => e.target.value = e.target.value.replace(/[^0-9]/g,'')
+  
+  // Função para mostrar campos específicos de pagamento
+  window.mostrarCamposPagamento = (tipo) => {
+    const container = document.getElementById('camposPagamento')
+    if(tipo === 'pix'){
+      container.innerHTML = `
+        <div style='background:var(--card-bg);padding:20px;border-radius:8px;border:2px solid #00d959;'>
+          <h3 style='color:var(--text);margin-bottom:10px;'>💠 Pagamento via Pix</h3>
+          <p style='color:var(--gray);font-size:14px;margin-bottom:15px;'>Após finalizar o pedido, você receberá um QR Code para pagamento instantâneo.</p>
+          <div style='display:flex;align-items:center;gap:10px;'>
+            <span style='font-size:40px;'>📱</span>
+            <div>
+              <p style='color:var(--text);font-weight:600;margin-bottom:3px;'>Rápido e Seguro</p>
+              <p style='color:var(--gray);font-size:12px;'>Confirmação em até 2 minutos</p>
+            </div>
+          </div>
+        </div>
+      `
+    } else if(tipo === 'cartao'){
+      container.innerHTML = `
+        <div style='background:var(--card-bg);padding:20px;border-radius:8px;border:2px solid var(--pink);'>
+          <h3 style='color:var(--text);margin-bottom:15px;'>💳 Dados do Cartão</h3>
+          <input id='numCartao' class='input' placeholder='Número do Cartão (16 dígitos)' maxlength='16' style='margin-bottom:10px;'>
+          <div style='display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;'>
+            <input id='validadeCartao' class='input' placeholder='Validade (MM/AA)' maxlength='5'>
+            <input id='cvvCartao' class='input' placeholder='CVV' maxlength='3'>
+          </div>
+          <input id='nomeCartao' class='input' placeholder='Nome impresso no cartão' style='margin-bottom:10px;'>
+          <select id='parcelasCartao' class='input' style='cursor:pointer;'>
+            <option value='1'>1x sem juros</option>
+            <option value='2'>2x sem juros</option>
+            <option value='3'>3x sem juros</option>
+            <option value='4'>4x com juros</option>
+            <option value='5'>5x com juros</option>
+            <option value='6'>6x com juros</option>
+          </select>
+          <p style='color:var(--gray);font-size:12px;margin-top:10px;'>🔒 Pagamento seguro e criptografado</p>
+        </div>
+      `
+      // Validações do cartão
+      document.getElementById('numCartao').oninput = (e) => e.target.value = e.target.value.replace(/[^0-9]/g,'')
+      document.getElementById('cvvCartao').oninput = (e) => e.target.value = e.target.value.replace(/[^0-9]/g,'')
+      document.getElementById('validadeCartao').oninput = (e) => {
+        let val = e.target.value.replace(/[^0-9]/g,'')
+        if(val.length >= 2) val = val.slice(0,2) + '/' + val.slice(2,4)
+        e.target.value = val
+      }
+    } else if(tipo === 'boleto'){
+      container.innerHTML = `
+        <div style='background:var(--card-bg);padding:20px;border-radius:8px;border:2px solid #ff9800;'>
+          <h3 style='color:var(--text);margin-bottom:10px;'>📄 Pagamento via Boleto</h3>
+          <p style='color:var(--gray);font-size:14px;margin-bottom:15px;'>Após finalizar o pedido, você poderá baixar o boleto bancário.</p>
+          <div style='background:rgba(255,152,0,0.1);padding:15px;border-radius:6px;margin-bottom:10px;'>
+            <p style='color:var(--text);font-weight:600;margin-bottom:5px;'>⚠️ Importante:</p>
+            <p style='color:var(--gray);font-size:13px;'>• Vencimento em 3 dias úteis</p>
+            <p style='color:var(--gray);font-size:13px;'>• Pedido aprovado após confirmação do pagamento</p>
+            <p style='color:var(--gray);font-size:13px;'>• Pode levar até 2 dias úteis para compensar</p>
+          </div>
+          <div style='display:flex;align-items:center;gap:10px;'>
+            <span style='font-size:40px;'>🏦</span>
+            <div>
+              <p style='color:var(--text);font-weight:600;margin-bottom:3px;'>Pague em qualquer banco</p>
+              <p style='color:var(--gray);font-size:12px;'>Internet banking, lotéricas ou agências</p>
+            </div>
+          </div>
+        </div>
+      `
+    }
+  }
+  
+  // Inicializar com Pix selecionado
+  mostrarCamposPagamento('pix')
+  
+  // Sistema de cupons - buscar do localStorage
+  let cupomAplicado = null
+  let descontoAplicado = 0
+  let freteAtual = 15
+  
+  $('#btnAplicarCupom').onclick = () => {
+    const codigoCupom = $('#fCupom').value.trim().toUpperCase()
+    const feedback = $('#cupomFeedback')
+    
+    if(!codigoCupom) {
+      feedback.innerHTML = `<p style='color:#ff0080;font-size:13px;'>⚠️ Digite um código de cupom</p>`
+      return
+    }
+    
+    if(cupomAplicado) {
+      feedback.innerHTML = `<p style='color:#ff0080;font-size:13px;'>⚠️ Você já aplicou um cupom. Remova-o primeiro.</p>`
+      return
+    }
+    
+    // Buscar cupom do localStorage
+    const todosCupons = getCupons()
+    const cupom = todosCupons.find(c => c.codigo === codigoCupom && c.ativo)
+    
+    if(!cupom) {
+      feedback.innerHTML = `<p style='color:#ff0080;font-size:13px;'>❌ Cupom inválido ou expirado</p>`
+      showToast('Cupom inválido ou inativo!', 'error')
+      return
+    }
+    
+    cupomAplicado = { codigo: codigoCupom, ...cupom }
+    
+    // Calcular desconto
+    if(cupom.tipo === 'percentual') {
+      descontoAplicado = subtotal * (cupom.valor / 100)
+    } else if(cupom.tipo === 'fixo') {
+      descontoAplicado = cupom.valor
+    } else if(cupom.tipo === 'frete') {
+      freteAtual = 0
+      descontoAplicado = 15 // Valor do frete
+    }
+    
+    // Atualizar interface
+    const novoTotal = subtotal + freteAtual - (cupom.tipo !== 'frete' ? descontoAplicado : 0)
+    $('#spanFrete').textContent = `R$ ${freteAtual.toFixed(2)}`
+    $('#spanDesconto').textContent = `- R$ ${descontoAplicado.toFixed(2)}`
+    $('#nomeCupom').textContent = codigoCupom
+    $('#linhaDesconto').style.display = 'block'
+    $('#spanTotal').textContent = `R$ ${novoTotal.toFixed(2)}`
+    
+    feedback.innerHTML = `
+      <div style='display:flex;align-items:center;justify-content:space-between;background:rgba(0,217,89,0.1);padding:10px;border-radius:6px;border:1px solid #00d959;'>
+        <div>
+          <p style='color:#00d959;font-weight:600;margin-bottom:3px;'>✅ Cupom aplicado!</p>
+          <p style='color:var(--gray);font-size:12px;'>${cupom.descricao}</p>
+        </div>
+        <button onclick='removerCupom()' style='background:#ff0080;color:#fff;border:none;padding:6px 12px;border-radius:4px;cursor:pointer;font-size:12px;font-weight:600;'>Remover</button>
+      </div>
+    `
+    
+    $('#fCupom').value = ''
+    $('#fCupom').disabled = true
+    $('#btnAplicarCupom').disabled = true
+    showToast(`🎁 Cupom ${codigoCupom} aplicado com sucesso!`, 'success')
+  }
+  
+  window.removerCupom = () => {
+    cupomAplicado = null
+    descontoAplicado = 0
+    freteAtual = 15
+    
+    $('#spanFrete').textContent = 'R$ 15,00'
+    $('#linhaDesconto').style.display = 'none'
+    $('#spanTotal').textContent = `R$ ${(subtotal + 15).toFixed(2)}`
+    $('#cupomFeedback').innerHTML = ''
+    $('#fCupom').disabled = false
+    $('#fCupom').value = ''
+    $('#btnAplicarCupom').disabled = false
+    showToast('Cupom removido', 'info')
+  }
+  
+  $('#fCupom').oninput = (e) => e.target.value = e.target.value.toUpperCase()
+  
+  $('#finalizarPedido').onclick=()=>{
+    const user = getSession()
+    const nome = $('#fNome').value.trim()
+    const telefone = $('#fTelefone').value.trim()
+    const cep = $('#fCEP').value.trim()
+    const estado = $('#fEstado').value.trim()
+    const cidade = $('#fCidade').value.trim()
+    const bairro = $('#fBairro').value.trim()
+    const rua = $('#fRua').value.trim()
+    const numero = $('#fNumero').value.trim()
+    
+    if(!nome || !telefone || !cep || !estado || !cidade || !bairro || !rua || !numero){
+      showToast('Por favor, preencha todos os campos de endereço!', 'error')
+      return
+    }
+    
+    if(cep.length < 8){
+      showToast('CEP deve ter 8 dígitos!', 'error')
+      return
+    }
+    
+    if(telefone.length < 10){
+      showToast('Telefone inválido!', 'error')
+      return
+    }
+    
+    // Validar campos do cartão se for pagamento com cartão
+    const formaPagamento = document.querySelector('input[name="pg"]:checked').value
+    if(formaPagamento === 'cartao'){
+      const numCartao = document.getElementById('numCartao')?.value.trim()
+      const validadeCartao = document.getElementById('validadeCartao')?.value.trim()
+      const cvvCartao = document.getElementById('cvvCartao')?.value.trim()
+      const nomeCartao = document.getElementById('nomeCartao')?.value.trim()
+      
+      if(!numCartao || numCartao.length !== 16){
+        showToast('Número do cartão inválido! Deve ter 16 dígitos.', 'error')
+        return
+      }
+      if(!validadeCartao || validadeCartao.length !== 5){
+        showToast('Validade do cartão inválida! Use formato MM/AA.', 'error')
+        return
+      }
+      if(!cvvCartao || cvvCartao.length < 3){
+        showToast('CVV inválido! Deve ter 3 dígitos.', 'error')
+        return
+      }
+      if(!nomeCartao){
+        showToast('Preencha o nome impresso no cartão!', 'error')
+        return
+      }
+    }
+    
+    // Salvar pedido
+    const cartItems = getCart(user)
+    // Buscar produtos sempre do admin (catálogo central)
+    const todosProdutos = getProducts('admin@dyva.com')
+    
+    // RECALCULAR SUBTOTAL AQUI (bug fix)
+    let subtotalFinal = 0
+    cartItems.forEach(item => {
+      const produto = todosProdutos.find(p => p.id === item.id)
+      if(produto) subtotalFinal += parseFloat(produto.preco) * item.qty
+    })
+    
+    const produtos = cartItems.map(item => {
+      const p = todosProdutos.find(prod => prod.id === item.id)
+      return p ? {...p, qty: item.qty, tamanho: item.tamanho} : null
+    }).filter(p => p)
+    
+    // Garante frete correto quando nenhum cupom de frete estiver aplicado
+    if(!cupomAplicado || (cupomAplicado && cupomAplicado.tipo !== 'frete')) {
+      freteAtual = 15
+    }
+
+    // Evita descontar duas vezes quando o cupom for de frete grátis
+    const totalComFrete = subtotalFinal + Number(freteAtual) - (cupomAplicado && cupomAplicado.tipo === 'frete' ? 0 : Number(descontoAplicado))
+    
+    const pedido = {
+      id: Date.now(),
+      data: new Date().toLocaleDateString('pt-BR'),
+      produtos: produtos,
+  subtotal: subtotalFinal.toFixed(2),
+  frete: Number(freteAtual).toFixed(2),
+  desconto: Number(descontoAplicado).toFixed(2),
+      cupom: cupomAplicado ? cupomAplicado.codigo : null,
+      total: totalComFrete.toFixed(2),
+      endereco: {nome, telefone, cep, estado, cidade, bairro, rua, numero},
+      pagamento: formaPagamento,
+      status: 'Pedido Recebido',
+      statusIndex: 0
+    }
+    
+    addPedido(user, pedido)
+    saveCart(user, []) // Limpar carrinho
+    updateBadges()
+    
+    mostrarRecibo(pedido)
+  }
+}
+
+function mostrarRecibo(pedido){
+  showContainer()
+  root.innerHTML=`
+    <div style='text-align:center;padding:20px 0;'>
+      <div style='font-size:60px;color:#00c853;margin-bottom:10px;'>✓</div>
+      <h1 style='color:#00c853;margin-bottom:5px;'>Pedido Confirmado!</h1>
+      <p style='color:var(--gray);'>Obrigado pela compra!</p>
+    </div>
+    
+    <div style='border:2px solid #00c853;padding:15px;border-radius:8px;margin:20px 0;background:var(--card-bg);'>
+      <h3 style='color:var(--text);text-align:center;margin-bottom:10px;'>Pedido #${pedido.id}</h3>
+      <p style='text-align:center;color:var(--gray);font-size:14px;'>${pedido.data}</p>
+    </div>
+    
+    <div style='border:1px solid var(--border);padding:15px;border-radius:8px;margin:20px 0;background:var(--card-bg);'>
+      <h3 style='color:var(--text);margin-bottom:15px;'>📦 Itens do Pedido</h3>
+      ${pedido.produtos.map(p => `
+        <div style='display:flex;gap:10px;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid var(--border);'>
+          <img src='${p.img || 'https://via.placeholder.com/60?text=Produto'}' style='width:60px;height:60px;object-fit:cover;border-radius:5px;'>
+          <div style='flex:1;'>
+            <div style='font-weight:bold;color:var(--text);'>${p.nome}</div>
+            <div style='color:var(--gray);font-size:13px;'>Quantidade: ${p.qty}</div>
+            <div style='color:#ff0080;font-weight:bold;'>R$ ${p.preco} x ${p.qty} = R$ ${(parseFloat(p.preco) * p.qty).toFixed(2)}</div>
+          </div>
+        </div>
+      `).join('')}
+      <div style='text-align:right;margin-top:15px;'>
+        <h3 style='color:var(--text);'>Total: <span style='color:#ff0080;'>R$ ${pedido.total}</span></h3>
+      </div>
+    </div>
+    
+    <div style='border:1px solid var(--border);padding:15px;border-radius:8px;margin:20px 0;background:var(--card-bg);'>
+      <h3 style='color:var(--text);margin-bottom:15px;'>📍 Endereço de Entrega</h3>
+      <p style='color:var(--text);'><b>${pedido.endereco.nome}</b></p>
+      <p style='color:var(--gray);font-size:14px;'>${pedido.endereco.rua}, ${pedido.endereco.numero}</p>
+      <p style='color:var(--gray);font-size:14px;'>${pedido.endereco.bairro}</p>
+      <p style='color:var(--gray);font-size:14px;'>${pedido.endereco.cidade} - ${pedido.endereco.estado}</p>
+      <p style='color:var(--gray);font-size:14px;'>CEP: ${pedido.endereco.cep}</p>
+      <p style='color:var(--gray);font-size:14px;'>Telefone: ${pedido.endereco.telefone}</p>
+    </div>
+    
+    <div style='border:1px solid var(--border);padding:15px;border-radius:8px;margin:20px 0;background:var(--card-bg);'>
+      <h3 style='color:var(--text);margin-bottom:10px;'>💳 Pagamento</h3>
+  <p style='color:var(--text);'>${pedido.pagamento === 'pix' ? '📱 Pix' : pedido.pagamento === 'cartao' ? '💳 Cartão de Crédito/Débito' : '📄 Boleto Bancário'}</p>
+    </div>
+    
+    <button class='btn' id='verPedidos'>Ver Meus Pedidos</button>
+    <button class='btn' id='voltarHome2' style='background:#666;'>Voltar à Home</button>
+  `
+  
+  $('#verPedidos').onclick = () => perfilPage()
+  $('#voltarHome2').onclick = () => homePage()
+}
+
+function showResetModal(){
+  $('#overlay').classList.add('show')
+  $('#resetEmail').value = $('#loginEmail').value.trim() || ''
+}
+$('#btnCancelarReset').onclick=()=>$('#overlay').classList.remove('show')
+$('#btnEnviarReset').onclick=()=>{
+  const mail=$('#resetEmail').value.trim()
+  if(!mail){showToast('Digite seu e-mail!','error');return}
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mail)){showToast('E-mail inválido!','error');return}
+  const user=findUser(mail)
+  $('#overlay').classList.remove('show')
+  if(user) showToast('Link de recuperação enviado para: '+mail+' 📧','success')
+  else showToast('E-mail não encontrado no sistema.','error')
+}
+
+// Página de detalhes do produto com seleção de tamanho
+function abrirDetalheProduto(prodId){
+  showContainer()
+  const user = getSession()
+  if(!user){
+    showToast('Faça login primeiro!', 'error')
+    return loginPage()
+  }
+  const todosProdutos = getProducts('admin@dyva.com')
+  const p = todosProdutos.find(prod => prod.id === prodId)
+  if(!p){
+    showToast('Produto não encontrado!', 'error')
+    return homePage()
+  }
+  const tamanhos = Array.isArray(p.tamanhos) && p.tamanhos.length ? p.tamanhos : ['PP','P','M','G','GG']
+  let selecionado = ''
+  const botoes = tamanhos.map(t => `<button class='btn' style='width:auto;padding:8px 14px;background:var(--card-bg);color:var(--text);border:2px solid var(--border);border-radius:6px;margin-right:8px;margin-bottom:8px;cursor:pointer;font-weight:600;transition:all 0.2s;' data-tam='${t}'>${t}</button>`).join('')
+
+  root.innerHTML = `
+    <h1>Detalhes do Produto</h1>
+    <div style='display:grid;grid-template-columns:1fr 1fr;gap:20px;'>
+      <div style='text-align:center;'>
+        <img src='${p.img || 'https://via.placeholder.com/320x240?text=Produto'}' style='max-width:100%;border-radius:8px;border:1px solid var(--border);'>
+      </div>
+      <div>
+        <h2 style='color:var(--text);margin-bottom:6px;'>${p.nome}</h2>
+        <p style='color:var(--gray);font-size:13px;margin-bottom:10px;'>${p.categoria || ''}</p>
+        <p style='color:#ff0080;font-size:20px;font-weight:700;margin-bottom:10px;'>R$ ${p.preco}</p>
+        ${p.descricao && p.descricao.trim() ? `<p style='color:var(--text);line-height:1.4;margin:8px 0 16px;'>${p.descricao}</p>` : ''}
+        <div style='margin:8px 0;'>
+          <b style='color:var(--text);display:block;margin-bottom:6px;'>Selecione o tamanho</b>
+          <div id='areaTamanhos'>${botoes}</div>
+          <p class='small' style='color:var(--gray);margin-top:6px;'>Estoque disponível em todos os tamanhos.</p>
+        </div>
+        <button class='btn' id='btnAddCarrinho' disabled style='opacity:0.5;'>🛒 Adicionar ao Carrinho</button>
+        <button class='btn btn-voltar' id='btnVoltar'>← Voltar</button>
+      </div>
+    </div>
+  `
+
+  // Seleção de tamanho
+  document.querySelectorAll('[data-tam]').forEach(btn => {
+    btn.onclick = () => {
+      document.querySelectorAll('[data-tam]').forEach(b=>{b.style.background='var(--card-bg)';b.style.borderColor='var(--border)';b.style.color='var(--text)';b.style.transform='scale(1)'})
+      btn.style.background = '#ff0080'
+      btn.style.borderColor = '#ff0080'
+      btn.style.color = '#fff'
+      btn.style.transform = 'scale(1.05)'
+      selecionado = btn.getAttribute('data-tam')
+      const add = document.getElementById('btnAddCarrinho')
+      add.removeAttribute('disabled')
+      add.style.opacity = '1'
+    }
+  })
+
+  document.getElementById('btnVoltar').onclick = () => { homePage() }
+  document.getElementById('btnAddCarrinho').onclick = () => {
+    if(!selecionado){
+      showToast('Selecione um tamanho!', 'error')
+      return
+    }
+    addToCartWithSize(user, p.id, selecionado)
+    showToast(`🛒 ${p.nome} (${selecionado}) adicionado ao carrinho!`, 'success')
+    updateBadges()
+    carrinhoPage()
+  }
+
+  // Produtos relacionados ("Você também pode gostar")
+  const relacionados = todosProdutos.filter(pr => pr.categoria === p.categoria && pr.id !== p.id).slice(0, 3)
+  if(relacionados.length > 0){
+    const secaoRelacionados = document.createElement('div')
+    secaoRelacionados.innerHTML = `
+      <div style='margin-top:30px;padding-top:20px;border-top:1px solid var(--border);'>
+        <h3 style='color:var(--text);margin-bottom:15px;'>💡 Você também pode gostar</h3>
+        <div style='display:grid;grid-template-columns:repeat(3, 1fr);gap:15px;'>
+          ${relacionados.map(pr => `
+            <div style='text-align:center;border:1px solid var(--border);border-radius:8px;padding:10px;background:var(--card-bg);cursor:pointer;transition:all 0.2s;' onmouseover='this.style.transform="translateY(-4px)";this.style.boxShadow="0 4px 12px rgba(0,0,0,0.15)"' onmouseout='this.style.transform="translateY(0)";this.style.boxShadow="none"' onclick='abrirDetalheProduto(${pr.id})'>
+              <img src='${pr.img || 'https://via.placeholder.com/120?text=Produto'}' style='width:100%;height:120px;object-fit:cover;border-radius:6px;margin-bottom:8px;'>
+              <p style='color:var(--text);font-size:13px;font-weight:600;margin-bottom:4px;'>${pr.nome}</p>
+              <p style='color:#ff0080;font-weight:700;'>R$ ${pr.preco}</p>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `
+    root.appendChild(secaoRelacionados)
+  }
+}
+
+// Buscar CEP na API ViaCEP
+async function buscarCEP(cep){
+  const loader = showToast('🔍 Buscando endereço...', 'loading')
+  try {
+    const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`)
+    const data = await response.json()
+    loader.remove()
+    if(data.erro){
+      showToast('CEP não encontrado!', 'error')
+      return
+    }
+    $('#fEstado').value = data.uf || ''
+    $('#fCidade').value = data.localidade || ''
+    $('#fBairro').value = data.bairro || ''
+    $('#fRua').value = data.logradouro || ''
+    showToast('✓ Endereço preenchido automaticamente!', 'success')
+  } catch(err){
+    loader.remove()
+    showToast('Erro ao buscar CEP. Tente novamente.', 'error')
+  }
+}
+
+// Página de gerenciamento de cupons
+function cuponsPage(){
+  showContainer()
+  const user = getSession()
+  if(user !== 'admin@dyva.com'){
+    showToast('Acesso negado!', 'error')
+    return perfilPage()
+  }
+  
+  const cupons = getCupons()
+  
+  root.innerHTML = `
+    <h1>🎁 Gerenciar Cupons</h1>
+    <div class='link-row'><span>${user}</span><span class='text-link' id='sair'>Sair</span></div>
+    
+    <div style='background:var(--card-bg);padding:20px;border-radius:8px;border:2px solid #ff9800;margin:20px 0;'>
+      <h3 style='color:#ff9800;margin-bottom:15px;'>➕ Adicionar Novo Cupom</h3>
+      
+      <input id='cCodigo' class='input' placeholder='Código do Cupom (ex: NATAL2025)' style='text-transform:uppercase;margin-bottom:10px;'>
+      
+      <select id='cTipo' class='input' style='margin-bottom:10px;'>
+        <option value=''>Selecione o tipo</option>
+        <option value='percentual'>Percentual (%) - Desconto em %</option>
+        <option value='fixo'>Fixo (R$) - Desconto em reais</option>
+        <option value='frete'>Frete Grátis</option>
+      </select>
+      
+      <input id='cValor' class='input' placeholder='Valor (ex: 10 para 10% ou R$10)' type='number' min='0' style='margin-bottom:10px;'>
+      
+      <textarea id='cDescricao' class='input' placeholder='Descrição do cupom (ex: Desconto de Black Friday)' style='resize:vertical;min-height:60px;margin-bottom:10px;'></textarea>
+      
+      <button class='btn' id='btnAddCupom' style='background:#ff9800;'>✨ Criar Cupom</button>
+    </div>
+    
+    <div style='background:var(--card-bg);padding:20px;border-radius:8px;border:2px solid var(--border);'>
+      <h3 style='color:var(--text);margin-bottom:15px;'>📋 Cupons Cadastrados</h3>
+      <div id='listaCupons'></div>
+    </div>
+    
+    <button class='btn btn-voltar' id='voltarPerfil'>← Voltar ao Perfil</button>
+  `
+  
+  $('#sair').onclick = () => {logout(); homePage()}
+  $('#voltarPerfil').onclick = () => perfilPage()
+  
+  // Adicionar cupom
+  $('#btnAddCupom').onclick = () => {
+    const codigo = $('#cCodigo').value.trim().toUpperCase()
+    const tipo = $('#cTipo').value
+    const valor = parseFloat($('#cValor').value)
+    const descricao = $('#cDescricao').value.trim()
+    
+    if(!codigo){
+      showToast('Digite o código do cupom!', 'error')
+      return
+    }
+    
+    if(!tipo){
+      showToast('Selecione o tipo do cupom!', 'error')
+      return
+    }
+    
+    if(tipo !== 'frete' && (!valor || valor <= 0)){
+      showToast('Digite um valor válido!', 'error')
+      return
+    }
+    
+    if(!descricao){
+      showToast('Digite uma descrição!', 'error')
+      return
+    }
+    
+    // Verificar se código já existe
+    const cupons = getCupons()
+    if(cupons.find(c => c.codigo === codigo)){
+      showToast('Este código de cupom já existe!', 'error')
+      return
+    }
+    
+    const novoCupom = {
+      id: Date.now(),
+      codigo,
+      tipo,
+      valor: tipo === 'frete' ? 0 : valor,
+      descricao,
+      ativo: true
+    }
+    
+    cupons.push(novoCupom)
+    saveCupons(cupons)
+    
+    showToast('✨ Cupom criado com sucesso!', 'success')
+    
+    // Limpar campos
+    $('#cCodigo').value = ''
+    $('#cTipo').value = ''
+    $('#cValor').value = ''
+    $('#cDescricao').value = ''
+    
+    renderCupons()
+  }
+  
+  // Converter código para maiúsculo automaticamente
+  $('#cCodigo').oninput = (e) => e.target.value = e.target.value.toUpperCase()
+  
+  // Mostrar/esconder campo de valor
+  $('#cTipo').onchange = (e) => {
+    const valorInput = $('#cValor')
+    if(e.target.value === 'frete'){
+      valorInput.disabled = true
+      valorInput.value = '0'
+      valorInput.placeholder = 'Frete grátis (sem valor)'
+    } else {
+      valorInput.disabled = false
+      valorInput.value = ''
+      valorInput.placeholder = e.target.value === 'percentual' ? 'Valor em % (ex: 10)' : 'Valor em R$ (ex: 15)'
+    }
+  }
+  
+  function renderCupons(){
+    const cupons = getCupons()
+    const lista = $('#listaCupons')
+    
+    if(cupons.length === 0){
+      lista.innerHTML = '<p style="color:var(--gray);">Nenhum cupom cadastrado.</p>'
+      return
+    }
+    
+    lista.innerHTML = cupons.map(c => {
+      const tipoLabel = c.tipo === 'percentual' ? `${c.valor}% OFF` : c.tipo === 'fixo' ? `R$ ${c.valor.toFixed(2)} OFF` : 'FRETE GRÁTIS'
+      const tipoColor = c.tipo === 'percentual' ? '#ff9800' : c.tipo === 'fixo' ? '#4caf50' : '#2196f3'
+      
+      return `
+        <div style='border:2px solid ${c.ativo ? 'var(--border)' : '#ccc'};padding:15px;border-radius:8px;margin-bottom:12px;background:${c.ativo ? 'var(--bg)' : 'rgba(200,200,200,0.1)'};opacity:${c.ativo ? '1' : '0.6'};'>
+          <div style='display:flex;justify-content:space-between;align-items:start;margin-bottom:10px;'>
+            <div style='flex:1;'>
+              <div style='display:flex;align-items:center;gap:10px;margin-bottom:8px;'>
+                <h3 style='color:var(--text);margin:0;font-size:18px;font-family:monospace;background:linear-gradient(135deg, #ff0080, #ff9800);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;'>${c.codigo}</h3>
+                <span style='background:${tipoColor};color:white;padding:4px 10px;border-radius:12px;font-size:11px;font-weight:700;'>${tipoLabel}</span>
+                ${c.ativo ? '<span style="color:#4caf50;font-size:20px;" title="Ativo">✓</span>' : '<span style="color:#999;font-size:20px;" title="Inativo">○</span>'}
+              </div>
+              <p style='color:var(--gray);font-size:13px;margin:0;'>${c.descricao}</p>
+            </div>
+          </div>
+          
+          <div style='display:flex;gap:8px;margin-top:12px;'>
+            <button class='btn' style='font-size:12px;padding:8px 14px;background:${c.ativo ? '#ff9800' : '#4caf50'};' onclick='toggleCupomStatus(${c.id})'>
+              ${c.ativo ? '🔴 Desativar' : '🟢 Ativar'}
+            </button>
+            <button class='btn' style='font-size:12px;padding:8px 14px;background:#2196f3;' onclick='editarCupom(${c.id})'>✏️ Editar</button>
+            <button class='btn' style='font-size:12px;padding:8px 14px;background:#f44336;' onclick='excluirCupom(${c.id})'>🗑️ Excluir</button>
+          </div>
+        </div>
+      `
+    }).join('')
+  }
+  
+  renderCupons()
+}
+
+window.toggleCupomStatus = function(cupomId){
+  const cupons = getCupons()
+  const cupom = cupons.find(c => c.id === cupomId)
+  if(cupom){
+    cupom.ativo = !cupom.ativo
+    saveCupons(cupons)
+    showToast(cupom.ativo ? '🟢 Cupom ativado!' : '🔴 Cupom desativado!', cupom.ativo ? 'success' : 'info')
+    cuponsPage()
+  }
+}
+
+window.editarCupom = function(cupomId){
+  const cupons = getCupons()
+  const cupom = cupons.find(c => c.id === cupomId)
+  if(!cupom) return
+  
+  const novoCodigo = prompt('Novo código:', cupom.codigo)
+  if(!novoCodigo || novoCodigo.trim() === '') return
+  
+  const novaDescricao = prompt('Nova descrição:', cupom.descricao)
+  if(!novaDescricao || novaDescricao.trim() === '') return
+  
+  let novoValor = cupom.valor
+  if(cupom.tipo !== 'frete'){
+    novoValor = prompt(`Novo valor (${cupom.tipo === 'percentual' ? '%' : 'R$'}):`, cupom.valor)
+    if(!novoValor || isNaN(novoValor) || parseFloat(novoValor) <= 0) return
+    novoValor = parseFloat(novoValor)
+  }
+  
+  cupom.codigo = novoCodigo.toUpperCase()
+  cupom.descricao = novaDescricao
+  cupom.valor = novoValor
+  
+  saveCupons(cupons)
+  showToast('✏️ Cupom atualizado!', 'success')
+  cuponsPage()
+}
+
+window.excluirCupom = function(cupomId){
+  if(!confirm('Tem certeza que deseja excluir este cupom?')) return
+  
+  let cupons = getCupons()
+  cupons = cupons.filter(c => c.id !== cupomId)
+  saveCupons(cupons)
+  showToast('🗑️ Cupom excluído!', 'info')
+  cuponsPage()
+}
+
+// Dashboard administrativo com estatísticas
+function dashboardPage(){
+  showContainer()
+  const user = getSession()
+  if(user !== 'admin@dyva.com'){
+    showToast('Acesso negado!', 'error')
+    return perfilPage()
+  }
+
+  const produtos = getProducts(user)
+  const todosPedidos = []
+  const users = getUsers()
+  users.forEach(u => {
+    const pedidos = getPedidos(u.email)
+    pedidos.forEach(p => todosPedidos.push({...p, usuario: u.email}))
+  })
+
+  const totalProdutos = produtos.length
+  const totalPedidos = todosPedidos.length
+  const faturamentoTotal = todosPedidos.reduce((sum, p) => sum + parseFloat(p.total), 0)
+
+  // Vendas por categoria
+  const vendasPorCategoria = {}
+  todosPedidos.forEach(pedido => {
+    pedido.produtos.forEach(item => {
+      const cat = item.categoria || 'Outros'
+      vendasPorCategoria[cat] = (vendasPorCategoria[cat] || 0) + item.qty
+    })
+  })
+
+  const categoriasOrdenadas = Object.entries(vendasPorCategoria).sort((a,b) => b[1] - a[1])
+  const totalVendas = categoriasOrdenadas.reduce((s, [_, v]) => s + v, 0)
+
+  root.innerHTML = `
+    <h1>📊 Dashboard Administrativo</h1>
+    <div class='link-row'><span>${user}</span><span class='text-link' id='sair'>Sair</span></div>
+    
+    <div style='display:grid;grid-template-columns:repeat(3, 1fr);gap:15px;margin:20px 0;'>
+      <div style='background:linear-gradient(135deg, #667eea 0%, #764ba2 100%);padding:20px;border-radius:12px;color:white;box-shadow:0 4px 15px rgba(102,126,234,0.4);'>
+        <div style='font-size:32px;font-weight:700;margin-bottom:5px;'>${totalProdutos}</div>
+        <div style='font-size:14px;opacity:0.9;'>📦 Produtos Ativos</div>
+      </div>
+      <div style='background:linear-gradient(135deg, #f093fb 0%, #f5576c 100%);padding:20px;border-radius:12px;color:white;box-shadow:0 4px 15px rgba(240,147,251,0.4);'>
+        <div style='font-size:32px;font-weight:700;margin-bottom:5px;'>${totalPedidos}</div>
+        <div style='font-size:14px;opacity:0.9;'>🛍️ Pedidos Realizados</div>
+      </div>
+      <div style='background:linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);padding:20px;border-radius:12px;color:white;box-shadow:0 4px 15px rgba(79,172,254,0.4);'>
+        <div style='font-size:32px;font-weight:700;margin-bottom:5px;'>R$ ${faturamentoTotal.toFixed(2)}</div>
+        <div style='font-size:14px;opacity:0.9;'>💰 Faturamento Total</div>
+      </div>
+    </div>
+
+    <div style='border:1px solid var(--border);padding:20px;border-radius:12px;background:var(--card-bg);margin:20px 0;'>
+      <h3 style='color:var(--text);margin-bottom:20px;'>📈 Vendas por Categoria</h3>
+      ${categoriasOrdenadas.length === 0 ? '<p class="small" style="color:var(--gray);">Nenhuma venda registrada ainda.</p>' : 
+        categoriasOrdenadas.map(([cat, qtd]) => {
+          const percentual = ((qtd / totalVendas) * 100).toFixed(1)
+          return `
+            <div style='margin-bottom:15px;'>
+              <div style='display:flex;justify-content:space-between;margin-bottom:5px;'>
+                <span style='color:var(--text);font-weight:600;'>${cat}</span>
+                <span style='color:var(--gray);font-size:13px;'>${qtd} vendas (${percentual}%)</span>
+              </div>
+              <div style='background:var(--bg);height:24px;border-radius:12px;overflow:hidden;'>
+                <div style='background:linear-gradient(90deg, #ff0080, #ff4081);height:100%;width:${percentual}%;transition:width 0.5s ease;display:flex;align-items:center;justify-content:flex-end;padding-right:8px;'>
+                  <span style='color:white;font-size:11px;font-weight:700;'>${percentual}%</span>
+                </div>
+              </div>
+            </div>
+          `
+        }).join('')
+      }
+    </div>
+
+    <div style='border:1px solid var(--border);padding:20px;border-radius:12px;background:var(--card-bg);margin:20px 0;'>
+      <h3 style='color:var(--text);margin-bottom:15px;'>🏆 Produtos Mais Vendidos</h3>
+      ${(() => {
+        const prodVendas = {}
+        todosPedidos.forEach(pedido => {
+          pedido.produtos.forEach(item => {
+            prodVendas[item.nome] = (prodVendas[item.nome] || 0) + item.qty
+          })
+        })
+        const top5 = Object.entries(prodVendas).sort((a,b) => b[1] - a[1]).slice(0, 5)
+        return top5.length === 0 ? '<p class="small" style="color:var(--gray);">Nenhuma venda ainda.</p>' :
+          top5.map(([nome, qtd], i) => `
+            <div style='display:flex;justify-content:space-between;padding:10px;border-bottom:1px solid var(--border);'>
+              <span style='color:var(--text);'><b>${i+1}.</b> ${nome}</span>
+              <span style='color:#ff0080;font-weight:700;'>${qtd} vendidos</span>
+            </div>
+          `).join('')
+      })()}
+    </div>
+
+    <button class='btn' id='btnGerenciar'>Gerenciar Produtos</button>
+    <button class='btn btn-voltar' id='btnVoltar'>Voltar ao Perfil</button>
+  `
+
+  $('#sair').onclick = () => { logout(); homePage() }
+  $('#btnGerenciar').onclick = () => productPage()
+  $('#btnVoltar').onclick = () => perfilPage()
+}
+
+// Inicializar sistema depois que API.js carregar
+function inicializarSistema() {
+  initProducts();
+  homePage();
+}
+
+// === FUNÇÕES DE DEBUG (usar no console) ===
+window.debugCupons = function() {
+  const cupons = getCupons()
+  console.log('📋 Cupons no sistema:', cupons)
+  cupons.forEach(c => {
+    console.log(`${c.ativo ? '✅' : '❌'} ${c.codigo} - ${c.descricao}`)
+  })
+  return cupons
+}
+
+window.resetarCupons = function() {
+  localStorage.removeItem('dyva_cupons')
+  const cupons = getCupons()
+  console.log('✅ Cupons resetados!')
+  return cupons
+}
+
+window.ativarCupom = function(codigo) {
+  const cupons = getCupons()
+  const cupom = cupons.find(c => c.codigo === codigo.toUpperCase())
+  if(cupom) {
+    cupom.ativo = true
+    saveCupons(cupons)
+    console.log(`✅ Cupom ${codigo} ativado!`)
+  } else {
+    console.log(`❌ Cupom ${codigo} não encontrado`)
+  }
+}
+
+console.log('💡 Comandos disponíveis no console:')
+console.log('  debugCupons() - Ver todos os cupons')
+console.log('  resetarCupons() - Resetar cupons padrão')
+console.log('  ativarCupom("DYVA20") - Ativar cupom específico')
+
+// Apenas chama o sistema normalmente
+inicializarSistema();
+</script>
+</body>
+</html>
