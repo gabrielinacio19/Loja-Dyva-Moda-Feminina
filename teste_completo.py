@@ -92,7 +92,7 @@ def testar_sistema():
     
     # 7. Testar favoritos
     print("\n7️⃣  Testando FAVORITOS...")
-    fav = c.post('/api/favoritos/adicionar', json={'produto_id': 2}, headers=headers)
+    fav = c.post('/api/favoritos/toggle', json={'produto_id': 2}, headers=headers)
     print(f"   Adicionar: Status {fav.status_code}")
     
     ver_fav = c.get('/api/favoritos', headers=headers)
