@@ -8,6 +8,7 @@ O sistema conta com frontend responsivo, backend estruturado e banco de dados in
 O projeto Dyva Moda Feminina nasceu com o objetivo de digitalizar uma loja de moda que até então vendia apenas por redes sociais, criando uma plataforma completa de e-commerce com vitrine de produtos, carrinho de compras, cadastro de clientes, controle de estoque e múltiplas formas de pagamento.
 
 A aplicação foi desenvolvida utilizando:
+	
 	•	Frontend (HTML, CSS e JavaScript puro)
 	•	Backend (Flask / Python)
 	•	Banco de Dados SQLite
