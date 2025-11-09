@@ -1,36 +1,33 @@
 # 🛍️ DYVA - E-commerce de Moda Feminina
 
-Projeto acadêmico desenvolvido para representar o sistema completo de uma loja virtual de roupas femininas — Dyva Moda Feminina.
-O sistema conta com frontend responsivo, backend estruturado e banco de dados integrado, aplicando na prática os conceitos de Metodologias Ágeis e desenvolvimento full-stack.
+Projeto acadêmico desenvolvido para representar o sistema completo de uma loja virtual de roupas femininas — Dyva Moda Feminina. O sistema conta com frontend responsivo, backend estruturado e banco de dados integrado, aplicando na prática os conceitos de Metodologias Ágeis e desenvolvimento full-stack.
 
-#💡 Sobre o Projeto
+## 💡 Sobre o Projeto
 
 O projeto Dyva Moda Feminina nasceu com o objetivo de digitalizar uma loja de moda que até então vendia apenas por redes sociais, criando uma plataforma completa de e-commerce com vitrine de produtos, carrinho de compras, cadastro de clientes, controle de estoque e múltiplas formas de pagamento.
 
 A aplicação foi desenvolvida utilizando:
-	
-	•	Frontend (HTML, CSS e JavaScript puro)
-	•	Backend (Flask / Python)
-	•	Banco de Dados SQLite
+- **Frontend** (HTML, CSS e JavaScript puro)
+- **Backend** (Flask / Python)  
+- **Banco de Dados** SQLite
 
 O protótipo visual completo foi criado no Figma, garantindo uma identidade moderna, elegante e totalmente alinhada ao público da marca.
 
-🎨 Link do protótipo no Figma:
-https://www.figma.com/design/MVYsvlhxCL7uafokocM3uW/Projeto-Dyva?node-id=3-13&t=antHckkby9nflvr6-1 
+🎨 **Link do protótipo no Figma:** [https://www.figma.com/design/MVYsvlhxCL7uafokocM3uW/Projeto-Dyva?node-id=3-13&t=antHckkby9nflvr6-1](https://www.figma.com/design/MVYsvlhxCL7uafokocM3uW/Projeto-Dyva?node-id=3-13&t=antHckkby9nflvr6-1)
 
-#👥 Equipe de Desenvolvimento
+## 👥 Equipe de Desenvolvimento
 
-Yasmim Nicole – Product Owner (PO): Representou a loja Dyva, definiu as prioridades do backlog e validou as funcionalidades do sistema, garantindo que o produto final atendesse às necessidades do cliente.
+**Yasmim Nicole** – Product Owner (PO): Representou a loja Dyva, definiu as prioridades do backlog e validou as funcionalidades do sistema, garantindo que o produto final atendesse às necessidades do cliente.
 
-Gabriel Coatti – Scrum Master: Responsável por aplicar as metodologias ágeis, organizar as reuniões de acompanhamento e auxiliar a equipe na remoção de impedimentos durante o desenvolvimento do projeto.
+**Gabriel Coatti** – Scrum Master: Responsável por aplicar as metodologias ágeis, organizar as reuniões de acompanhamento e auxiliar a equipe na remoção de impedimentos durante o desenvolvimento do projeto.
 
-Kaio Martins – Desenvolvedor Front-end: Responsável pela criação das interfaces do sistema, como o catálogo, o login e o carrinho de compras, além de garantir a responsividade e a boa experiência do usuário.
+**Kaio Martins** – Desenvolvedor Front-end: Responsável pela criação das interfaces do sistema, como o catálogo, o login e o carrinho de compras, além de garantir a responsividade e a boa experiência do usuário.
 
-Fabricio Lucas – Desenvolvedor Back-end: Ficou responsável pela implementação da lógica do servidor, rotas e integração do back-end com o banco de dados, assegurando o funcionamento correto das funcionalidades.
+**Fabricio Lucas** – Desenvolvedor Back-end: Ficou responsável pela implementação da lógica do servidor, rotas e integração do back-end com o banco de dados, assegurando o funcionamento correto das funcionalidades.
 
-Sarah Vitória – Desenvolvedora de Banco de Dados e Testes: Responsável pela modelagem e estruturação do banco de dados, criação das tabelas, consultas e apoio nos testes e validação do sistema.
+**Sarah Vitória** – Desenvolvedora de Banco de Dados e Testes: Responsável pela modelagem e estruturação do banco de dados, criação das tabelas, consultas e apoio nos testes e validação do sistema.
 
-Gabriel Inácio – Líder do Projeto e Designer de Interface: Atuou na coordenação geral do grupo, organizando as etapas de desenvolvimento, além de ser o criador do protótipo visual completo no Figma, definindo as telas, cores e elementos da interface da Dyva Moda Feminina.
+**Gabriel Inácio** – Líder do Projeto e Designer de Interface: Atuou na coordenação geral do grupo, organizando as etapas de desenvolvimento, além de ser o criador do protótipo visual completo no Figma, definindo as telas, cores e elementos da interface da Dyva Moda Feminina.
 
 ## 🚀 Como Executar
 
@@ -167,12 +164,18 @@ dyva/
 
 ## 📚 Resumo Acadêmico
 
-O projeto foi desenvolvido como parte da disciplina Metodologias Ágeis, aplicando práticas do Scrum (como Product Backlog, Daily Scrum, Sprint Review e Kanban).
-Durante o processo, foram criados e integrados os três pilares do sistema:
-	•	Frontend (interface e usabilidade)
-	•	Backend (regras de negócio e API)
-	•	Banco de Dados (armazenamento e persistência de dados)
+O projeto foi desenvolvido como parte da disciplina Metodologias Ágeis, aplicando práticas do Scrum (como Product Backlog, Daily Scrum, Sprint Review e Kanban). Durante o processo, foram criados e integrados os três pilares do sistema:
+- **Frontend** (interface e usabilidade)
+- **Backend** (regras de negócio e API)
+- **Banco de Dados** (armazenamento e persistência de dados)
 
 O resultado é uma aplicação funcional, organizada e moderna, que demonstra o uso das boas práticas de desenvolvimento ágil em um contexto real.
 
+## 🎓 Projeto Acadêmico
 
+Sistema desenvolvido como projeto acadêmico demonstrando:
+- Arquitetura full-stack
+- API REST bem estruturada  
+- Frontend moderno responsivo
+- Testes automatizados completos
+- Banco de dados normalizado
