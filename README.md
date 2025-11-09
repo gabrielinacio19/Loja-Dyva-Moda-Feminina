@@ -15,8 +15,7 @@ A aplicação foi desenvolvida utilizando:
 O protótipo visual completo foi criado no Figma, garantindo uma identidade moderna, elegante e totalmente alinhada ao público da marca.
 
 🎨 Link do protótipo no Figma:
-https://www.figma.com/design/MVYsvlhxCL7uafokocM3uW/Projeto-Dyva?node-id=3-13&t=IJPB
-zk84zWxDHlaM-1
+https://www.figma.com/design/MVYsvlhxCL7uafokocM3uW/Projeto-Dyva?node-id=3-13&t=antHckkby9nflvr6-1 
 
 #👥 Equipe de Desenvolvimento
 
