@@ -1,19 +1,20 @@
 # 🛍️ DYVA - E-commerce de Moda Feminina
 
-Projeto acadêmico desenvolvido para representar o sistema completo de uma loja virtual de roupas femininas — Dyva Moda Feminina. O sistema conta com frontend responsivo, backend estruturado e banco de dados integrado, aplicando na prática os conceitos de Metodologias Ágeis e desenvolvimento full-stack.
+Sistema completo de e-commerce desenvolvido como projeto acadêmico de Metodologias Ágeis. Uma plataforma full-stack para loja virtual de roupas femininas com frontend responsivo, backend robusto e banco de dados integrado.
 
 ## 💡 Sobre o Projeto
 
-O projeto Dyva Moda Feminina nasceu com o objetivo de digitalizar uma loja de moda que até então vendia apenas por redes sociais, criando uma plataforma completa de e-commerce com vitrine de produtos, carrinho de compras, cadastro de clientes, controle de estoque e múltiplas formas de pagamento.
+O projeto **Dyva Moda Feminina** foi desenvolvido para digitalizar uma loja de moda que operava apenas via redes sociais, transformando-a em uma plataforma completa de e-commerce. O sistema oferece vitrine de produtos, carrinho de compras, cadastro de clientes, controle de estoque e sistema de pedidos.
 
-A aplicação foi desenvolvida utilizando:
-- **Frontend** (HTML, CSS e JavaScript puro)
-- **Backend** (Flask / Python)  
-- **Banco de Dados** SQLite
+### 🏗️ **Stack Tecnológica:**
+- **Frontend:** HTML5, CSS3, JavaScript (SPA)
+- **Backend:** Flask (Python) com API REST  
+- **Banco de Dados:** SQLite
+- **Autenticação:** JWT Token
+- **Design:** Figma para prototipagem
 
-O protótipo visual completo foi criado no Figma, garantindo uma identidade moderna, elegante e totalmente alinhada ao público da marca.
-
-🎨 **Link do protótipo no Figma:** [https://www.figma.com/design/MVYsvlhxCL7uafokocM3uW/Projeto-Dyva?node-id=3-13&t=antHckkby9nflvr6-1](https://www.figma.com/design/MVYsvlhxCL7uafokocM3uW/Projeto-Dyva?node-id=3-13&t=antHckkby9nflvr6-1)
+### 🎨 **Protótipos:**
+- **Protótipo Figma:** [Ver Design Completo](https://www.figma.com/design/MVYsvlhxCL7uafokocM3uW/Projeto-Dyva?node-id=3-13&t=antHckkby9nflvr6-1)
 
 ## 👥 Equipe de Desenvolvimento
 
@@ -32,17 +33,17 @@ O protótipo visual completo foi criado no Figma, garantindo uma identidade mode
 ## 🚀 Como Executar
 
 ### 1. Instalação
-```powershell
+```bash
 pip install -r requirements.txt
 ```
 
 ### 2. Inicializar Banco de Dados
-```powershell
+```bash
 python banco.py
 ```
 
 ### 3. Iniciar Backend
-```powershell
+```bash
 python app.py
 ```
 *Backend rodará em: http://localhost:5000*
@@ -94,16 +95,12 @@ Abrir `site.html` no navegador
 - Interface responsiva
 - Validação client-side
 
-## 🧪 Testes Automatizados
+##  Reset do Banco de Dados
 
-### Executar Suite de Testes:
-```powershell
-python teste_completo.py
+```bash
+python reset_banco.py
 ```
-*Testa os principais fluxos do sistema*
-
-### Interface de Testes:
-Abrir `teste-integracao.html` no navegador
+*Restaura o banco para estado inicial limpo (ideal para demonstrações)*
 
 ## 🔑 Credenciais de Teste
 
@@ -146,20 +143,16 @@ Abrir `teste-integracao.html` no navegador
 ## 📁 Estrutura do Projeto
 
 ```
-dyva/
-├── app.py                          # Backend Flask com API REST
-├── banco.py                        # Script de criação do banco
-├── site.html                       # Frontend SPA completo
-├── dyva.db                         # Banco SQLite com dados
-├── requirements.txt                # Dependências Python
-├── teste_completo.py               # Suite de testes automatizados
-├── teste-integracao.html           # Interface de testes
-├── explorar_banco.py               # Ferramenta de exploração do BD
-├── visualizar_banco.py             # Monitor em tempo real do BD
-├── simular_operacoes.py            # Simulador de operações
-├── validacao_completa_backend.py   # Validação do backend
-├── testar_banco.py                 # Testes unitários do banco
-└── README.md                       # Documentação completa
+dyva-ecommerce/
+├── � prototipo- figma/         # Protótipos e designs do Figma
+├── �📄 app.py                    # Backend Flask com API REST
+├── 📄 banco.py                  # Sistema de banco de dados SQLite
+├── 📄 site.html                 # Frontend SPA completo
+├── 📄 dyva.db                   # Banco SQLite com dados
+├── 📄 requirements.txt          # Dependências Python
+├── 📄 reset_banco.py            # Script de reset do banco
+├── 📄 .gitignore                # Configuração Git
+└── 📄 README.md                 # Documentação do projeto
 ```
 
 ## 📚 Resumo Acadêmico
@@ -177,5 +170,4 @@ Sistema desenvolvido como projeto acadêmico demonstrando:
 - Arquitetura full-stack
 - API REST bem estruturada  
 - Frontend moderno responsivo
-- Testes automatizados completos
 - Banco de dados normalizado
