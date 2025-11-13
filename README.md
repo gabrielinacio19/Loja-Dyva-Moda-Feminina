@@ -1,6 +1,7 @@
 # 🛍️ DYVA - E-commerce de Moda Feminina
 
-Sistema completo de e-commerce desenvolvido como projeto acadêmico de Metodologias Ágeis. Uma plataforma full-stack para loja virtual de roupas femininas com frontend responsivo, backend robusto e banco de dados integrado.
+Sistema de e-commerce desenvolvido como projeto acadêmico da disciplina Metodologias Ágeis, aplicando práticas do framework Scrum.
+A plataforma é full-stack, com frontend responsivo, backend em Flask e banco de dados SQLite integrado, simulando o funcionamento real de uma loja virtual.
 
 ## 💡 Sobre o Projeto
 
@@ -85,10 +86,10 @@ Abrir `site.html` no navegador
 - Tratamento de erros
 
 ### **Banco de Dados (SQLite)**
-- **8 tabelas estruturadas:**
-  - usuarios, produtos, produtos_tamanhos
-  - carrinhos, favoritos, sessoes
-  - pedidos, pedido_itens
+- Banco relacional integrado ao Flask, armazenado em `dyva.db`
+- **8 tabelas principais:**
+  - usuarios, produtos, tamanhos, carrinhos, favoritos, sessoes, pedidos, pedido_itens
+- Estrutura pensada pra simular um fluxo completo de e-commerce real
 
 ### **Frontend (SPA)**
 - HTML5 + CSS3 + JavaScript puro
@@ -105,8 +106,9 @@ O sistema vem configurado com **apenas 2 usuários pré-cadastrados** para demon
 - **👤 Usuário:** `usuario@teste.com` / `senha123` (cliente)
 
 ### 📦 **Produtos Inclusos:**
-- 6 produtos de moda feminina
-- Com variações de tamanho (PP, P, M, G, GG)
+- 6 produtos de moda feminina (exibidos na vitrine)
+- Variações de tamanho (PP, P, M, G, GG)
+- Controle de estoque básico por tamanho
 
 ### 🔄 **Reset do Banco:**
 ```bash
@@ -156,8 +158,8 @@ python reset_banco.py
 
 ```
 dyva-ecommerce/
-├── � prototipo- figma/         # Protótipos e designs do Figma
-├── �📄 app.py                    # Backend Flask com API REST
+├── 📁 prototipo-figma/          # Protótipos e designs do Figma
+├── 📄 app.py                    # Backend Flask com API REST
 ├── 📄 banco.py                  # Sistema de banco de dados SQLite
 ├── 📄 site.html                 # Frontend SPA completo
 ├── 📄 dyva.db                   # Banco SQLite com dados
@@ -183,3 +185,5 @@ Sistema desenvolvido como projeto acadêmico demonstrando:
 - API REST bem estruturada  
 - Frontend moderno responsivo
 - Banco de dados normalizado
+- 
+Durante o desenvolvimento, foram aplicadas as principais cerimônias do Scrum — planejamento, daily meetings, revisões e retrospectivas —, o que possibilitou o acompanhamento contínuo do progresso e a adaptação a imprevistos de forma ágil e colaborativa.
