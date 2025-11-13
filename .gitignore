@@ -32,3 +32,25 @@ desktop.ini
 # Ambiente
 .env
 .env.local
+
+# Arquivos temporários e de teste
+teste*.py
+teste*.html
+*_temp.*
+*_test.*
+demonstracao*.py
+roteiro*.md
+CHECKLIST*.md
+STATUS*.md
+INTEGRACAO*.md
+
+# Pasta de demonstrações (apenas para uso local)
+demos/
+*_backup_*.db
+
+# Arquivos de exploração e teste
+explorar_*.py
+testar_*.py
+simular_*.py
+validacao_*.py
+visualizar_*.py
