@@ -185,5 +185,5 @@ Sistema desenvolvido como projeto acadêmico demonstrando:
 - API REST bem estruturada  
 - Frontend moderno responsivo
 - Banco de dados normalizado
-- 
+
 Durante o desenvolvimento, foram aplicadas as principais cerimônias do Scrum — planejamento, daily meetings, revisões e retrospectivas —, o que possibilitou o acompanhamento contínuo do progresso e a adaptação a imprevistos de forma ágil e colaborativa.
