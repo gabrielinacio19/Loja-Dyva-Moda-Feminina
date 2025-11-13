@@ -105,9 +105,8 @@ O sistema vem configurado com **apenas 2 usuários pré-cadastrados** para demon
 - **👤 Usuário:** `usuario@teste.com` / `senha123` (cliente)
 
 ### 📦 **Produtos Inclusos:**
-- 4 produtos de moda feminina
-- 20 variações de tamanho (PP, P, M, G, GG)
-- Estoque controlado por tamanho
+- 6 produtos de moda feminina
+- Com variações de tamanho (PP, P, M, G, GG)
 
 ### 🔄 **Reset do Banco:**
 ```bash
