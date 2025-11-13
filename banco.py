@@ -173,6 +173,17 @@ def criar_admin_e_produtos() -> None:
                 "INSERT INTO usuarios (nome, email, senha_hash, role) VALUES (?, ?, ?, 'admin')",
                 ("Admin", admin_email, admin_senha_hash),
             )
+            
+        # Usuário comum padrão
+        user_email = "usuario@teste.com"
+        user_senha_hash = sha256("senha123".encode("utf-8")).hexdigest()
+        cur.execute("SELECT id FROM usuarios WHERE email = ?", (user_email,))
+        row = cur.fetchone()
+        if not row:
+            cur.execute(
+                "INSERT INTO usuarios (nome, email, senha_hash, role) VALUES (?, ?, ?, 'user')",
+                ("Usuário Teste", user_email, user_senha_hash),
+            )
 
         # Produtos (só se não houver nenhum)
         cur.execute("SELECT COUNT(*) AS c FROM produtos")
@@ -270,9 +281,9 @@ def listar_produtos(ativos: bool = True) -> List[Dict[str, Any]]:
     with conectar() as conn:
         cur = conn.cursor()
         if ativos:
-            cur.execute("SELECT * FROM produtos WHERE ativo = 1 ORDER BY id DESC")
+            cur.execute("SELECT * FROM produtos WHERE ativo = 1 ORDER BY id ASC")
         else:
-            cur.execute("SELECT * FROM produtos ORDER BY id DESC")
+            cur.execute("SELECT * FROM produtos ORDER BY id ASC")
         return [dict(r) for r in cur.fetchall()]
 
 
@@ -393,6 +404,17 @@ def obter_tamanho(produto_id: int, tamanho: str) -> Optional[Dict[str, Any]]:
         )
         row = cur.fetchone()
         return {"tamanho": row[0], "estoque": int(row[1])} if row else None
+
+def listar_tamanhos(produto_id: int) -> List[Dict[str, Any]]:
+    """Lista todos os tamanhos disponíveis para um produto."""
+    with conectar() as conn:
+        cur = conn.cursor()
+        cur.execute(
+            "SELECT tamanho, estoque FROM produtos_tamanhos WHERE produto_id = ? ORDER BY tamanho",
+            (produto_id,),
+        )
+        rows = cur.fetchall()
+        return [{"tamanho": row[0], "estoque": int(row[1])} for row in rows]
 
 
 # ---------------------------
@@ -597,3 +619,36 @@ def decrementar_estoque(produto_id: int, tamanho: str, quantidade: int) -> bool:
         )
         conn.commit()
         return True
+
+
+# Executar inicialização quando arquivo é executado diretamente
+if __name__ == "__main__":
+    print("🚀 Inicializando banco de dados DYVA...")
+    
+    try:
+        # Inicializar estrutura do banco
+        inicializar_banco()
+        print("✅ Estrutura do banco criada com sucesso!")
+        
+        # Criar dados iniciais (admin + produtos)
+        criar_admin_e_produtos()
+        print("✅ Dados iniciais criados com sucesso!")
+        
+        # Verificar resultado
+        conn = conectar()
+        cursor = conn.cursor()
+        
+        cursor.execute("SELECT COUNT(*) FROM usuarios")
+        usuarios = cursor.fetchone()[0]
+        
+        cursor.execute("SELECT COUNT(*) FROM produtos") 
+        produtos = cursor.fetchone()[0]
+        
+        conn.close()
+        
+        print(f"📊 Banco inicializado: {usuarios} usuários, {produtos} produtos")
+        print("🎯 Banco pronto para uso!")
+        
+    except Exception as e:
+        print(f"❌ Erro na inicialização: {e}")
+        print("🔧 Verifique se o arquivo dyva.db pode ser criado nesta pasta")

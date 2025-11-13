@@ -13,8 +13,9 @@ O projeto **Dyva Moda Feminina** foi desenvolvido para digitalizar uma loja de m
 - **Autenticação:** JWT Token
 - **Design:** Figma para prototipagem
 
-### 🎨 **Protótipos:**
+### 🎨 **Design e Protótipos:**
 - **Protótipo Figma:** [Ver Design Completo](https://www.figma.com/design/MVYsvlhxCL7uafokocM3uW/Projeto-Dyva?node-id=3-13&t=antHckkby9nflvr6-1)
+- **Protótipos GitHub:** [Arquivos do Figma](https://github.com/gabrielinacio19/Loja-Dyva-Moda-Feminina/tree/main/prototipo-%20figma)
 
 ## 👥 Equipe de Desenvolvimento
 
@@ -95,8 +96,20 @@ Abrir `site.html` no navegador
 - Interface responsiva
 - Validação client-side
 
-##  Reset do Banco de Dados
+## 🗄️ Banco de Dados Organizado
 
+O sistema vem configurado com **apenas 2 usuários pré-cadastrados** para demonstração:
+
+### 🔑 **Credenciais de Acesso:**
+- **👑 Admin:** `admin@dyva.com` / `123456` (acesso completo)
+- **👤 Usuário:** `usuario@teste.com` / `senha123` (cliente)
+
+### 📦 **Produtos Inclusos:**
+- 4 produtos de moda feminina
+- 20 variações de tamanho (PP, P, M, G, GG)
+- Estoque controlado por tamanho
+
+### 🔄 **Reset do Banco:**
 ```bash
 python reset_banco.py
 ```

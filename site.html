@@ -268,16 +268,22 @@ function initProducts(){
   const user = 'admin@dyva.com';
   const produtosExistentes = getProducts(user);
   
-  // Só criar produtos se não existirem
-  if(produtosExistentes.length === 0) {
+  // Forçar recriação dos produtos com IDs corretos
+  console.log('🔄 Atualizando produtos para IDs corretos...');
+  
+  // Limpar produtos antigos com IDs incorretos
+  localStorage.removeItem('dyva_prod_' + user);
+  
+  if(true) { // PRODUTOS CORRETOS ATUALIZADOS
     const produtos = [
-      {id:1730000001, nome:'Blusa Xadrez e Short Saia', preco:'115.00', categoria:'Blusas', img:'https://i.ibb.co/CsNTvLWW/Blusa.jpg', descricao:'Conjunto leve e estiloso para o dia a dia.', tamanhos:['PP','P','M','G','GG']},
-      {id:1730000002, nome:'Conjunto no tecido Duna', preco:'70.00', categoria:'Croppeds', img:'https://i.ibb.co/tTqd5nGS/Conjunto-2.jpg', descricao:'Conjunto em tecido duna com ótimo caimento.', tamanhos:['PP','P','M','G','GG']},
-      {id:1730000003, nome:'Macaquinho Luara', preco:'80.00', categoria:'Macaquinhos', img:'https://i.ibb.co/qLmVqWJv/Macaquinho-Luara.jpg', descricao:'Macaquinho confortável para qualquer ocasião.', tamanhos:['PP','P','M','G','GG']},
-      {id:1730000004, nome:'Conjunto Tweed - Blazer e Short', preco:'130.00', categoria:'Croppeds', img:'https://i.ibb.co/KcFNJt6n/Conjunto.jpg', descricao:'Conjunto tweed elegante com blazer e short.', tamanhos:['PP','P','M','G','GG']},
-      {id:1730000005, nome:'Saia Tweed e Blusa Longa', preco:'115.00', categoria:'Saias', img:'https://i.ibb.co/F48L5cgj/Saia.jpg', descricao:'Saia tweed com blusa de manga longa.', tamanhos:['PP','P','M','G','GG']},
-      {id:1730000006, nome:'Cropped e Short Saia', preco:'115.00', categoria:'Croppeds', img:'https://i.ibb.co/GQ767fzQ/Cropped.jpg', descricao:'Cropped com short saia super versátil.', tamanhos:['PP','P','M','G','GG']}
+      {id:1, nome:'Macaquinho Luara', preco:'129.90', categoria:'Macaquinhos', img:'https://i.ibb.co/qLmVqWJv/Macaquinho-Luara.jpg', descricao:'Macaquinho floral elegante para qualquer ocasião.', tamanhos:['PP','P','M','G','GG']},
+      {id:2, nome:'Cropped e Short Saia', preco:'89.90', categoria:'Croppeds', img:'https://i.ibb.co/vCS1qpT6/croppedeshortsaia.jpg', descricao:'Cropped e short saia com ótimo caimento.', tamanhos:['PP','P','M','G','GG']},
+      {id:3, nome:'Saia Tweed e Blusa Longa', preco:'99.90', categoria:'Saias', img:'https://i.ibb.co/8nDsRj7Y/saiatweedeblusalonga.jpg', descricao:'Saia tweed versátil para o dia a dia.', tamanhos:['PP','P','M','G','GG']},
+      {id:4, nome:'Conjunto Tweed: Blazer e Short', preco:'69.90', categoria:'Blusas', img:'https://i.ibb.co/KcFNJt6n/Conjunto.jpg', descricao:'Conjunto tweed sofisticado e confortável.', tamanhos:['PP','P','M','G','GG']},
+      {id:5, nome:'Blusa Xadrez e Short Saia', preco:'115.00', categoria:'Blusas', img:'https://i.ibb.co/CsNTvLWW/Blusa.jpg', descricao:'Conjunto leve e estiloso para o dia a dia.', tamanhos:['PP','P','M','G','GG']},
+      {id:6, nome:'Conjunto no Tecido Duna', preco:'69.90', categoria:'Croppeds', img:'https://i.ibb.co/tTqd5nGS/Conjunto-2.jpg', descricao:'Conjunto em tecido duna com ótimo caimento.', tamanhos:['PP','P','M','G','GG']}
     ];
+    console.log('✅ PRODUTOS CORRETOS carregados no localStorage');
     saveProducts(user, produtos);
   } else {
     // Garantir que produtos antigos tenham os campos necessários
@@ -479,7 +485,7 @@ function mostrarResultados(produtos){
             return `
             <div class="prod-card">
               <button class="btn-fav" onclick="adicionarAoFavoritos(${p.id})" title="${isFavorito ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}" style="color:${isFavorito ? '#ff0080' : '#666'};">${isFavorito ? '❤️' : '🤍'}</button>
-              <img src="${p.img || 'https://via.placeholder.com/200x200?text=Produto'}">
+              <img src="${p.imagem || p.img || 'https://via.placeholder.com/200x200?text=Produto'}">
               <h4>${p.nome}</h4>
               <p style="color:var(--gray);font-size:12px;">${p.categoria || ''}</p>
               <p style="font-weight:bold;color:#ff0080;font-size:16px;margin:5px 0;">R$ ${p.preco}</p>
@@ -518,30 +524,33 @@ window.adicionarAoCarrinho = function(prodId){
   }
 }
 
-window.adicionarAoFavoritos = function(prodId){
+window.adicionarAoFavoritos = async function(prodId){
   const user = getSession()
   if(!user){showToast('Faça login primeiro!', 'error');return}
   const favoritos = getFavorites(user)
   
-  // Verifica se já está favoritado
-  if(favoritos.includes(prodId)){
-    // Remove dos favoritos
-    removeFromFavorites(user, prodId)
-    showToast('💔 Removido dos favoritos', 'info')
-  } else {
-    // Adiciona aos favoritos
-    addToFavorites(user, prodId)
+  // Usar função integrada para toggle de favorito
+  const novoStatus = await toggleFavoritoIntegrado(prodId)
+  
+  if (novoStatus) {
     showToast('❤️ Adicionado aos favoritos!', 'success')
+  } else {
+    showToast('💔 Removido dos favoritos', 'info')  
   }
   
-  // Recarrega a página atual
-  const btn = event.target
-  if(btn){
-    const isFavorito = !favoritos.includes(prodId)
-    btn.textContent = isFavorito ? '❤️' : '🤍'
-    btn.style.color = isFavorito ? '#ff0080' : '#666'
-    btn.title = isFavorito ? 'Remover dos favoritos' : 'Adicionar aos favoritos'
+  // Atualizar TODOS os botões de favorito para este produto
+  const botoes = document.querySelectorAll(`button[onclick="adicionarAoFavoritos(${prodId})"]`)
+  botoes.forEach(btn => {
+    btn.textContent = novoStatus ? '❤️' : '🤍'
+    btn.style.color = novoStatus ? '#ff0080' : '#666'
+    btn.title = novoStatus ? 'Remover dos favoritos' : 'Adicionar aos favoritos'
+  })
+  
+  // Recarregar página de favoritos se estiver ativa
+  if (window.location.hash === '#favoritos') {
+    setTimeout(() => favoritosPage(), 500)
   }
+  
   updateBadges()
 }
 
@@ -589,7 +598,7 @@ function favoritosPage(){
         ${produtos.length === 0 ? '<p style="text-align:center;color:var(--gray);grid-column:1/-1;">Você ainda não tem favoritos.</p>' : 
           produtos.map(p => `
             <div class="prod-card">
-              <img src="${p.img || 'https://via.placeholder.com/200x200?text=Produto'}">
+              <img src="${p.imagem || p.img || 'https://via.placeholder.com/200x200?text=Produto'}">
               <h4>${p.nome}</h4>
               <p style="color:var(--gray);font-size:12px;">${p.categoria || ''}</p>
               <p style="font-weight:bold;color:#ff0080;font-size:16px;margin:5px 0;">R$ ${p.preco}</p>
@@ -690,11 +699,27 @@ function homePage(){
   // Carregar produtos na home (mostrar todos os produtos ativos)
   const user = getSession()
   
-  // Garantir que produtos existam, caso contrário inicializar
-  let produtos = getProducts('admin@dyva.com') // Pega do catálogo central
-  if(produtos.length === 0) {
-    initProducts() // Força inicialização se não houver produtos
-    produtos = getProducts('admin@dyva.com')
+  // Priorizar produtos da API se disponível
+  let produtos = [];
+  const produtosCache = sessionStorage.getItem('dyva_produtos_api');
+  
+  if (produtosCache && window.modoIntegrado) {
+    try {
+      produtos = JSON.parse(produtosCache);
+      console.log('🏠 HOME: Usando produtos da API:', produtos.length);
+    } catch (error) {
+      console.warn('🏠 HOME: Erro ao parsear cache da API, usando localStorage');
+      produtos = getProducts('admin@dyva.com');
+    }
+  } else {
+    console.log('🏠 HOME: Usando produtos do localStorage');
+    produtos = getProducts('admin@dyva.com');
+    
+    // Garantir que produtos existam, caso contrário inicializar
+    if(produtos.length === 0) {
+      initProducts(); // Força inicialização se não houver produtos
+      produtos = getProducts('admin@dyva.com');
+    }
   }
   
   const favoritos = user ? getFavorites(user) : []
@@ -717,7 +742,7 @@ function homePage(){
       return `
         <div class="prod-card">
           <button class="btn-fav" onclick="adicionarAoFavoritos(${p.id})" title="${isFavorito ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}" style="color:${isFavorito ? '#ff0080' : '#666'};">${isFavorito ? '❤️' : '🤍'}</button>
-          <img src="${p.img || 'https://via.placeholder.com/200x200?text=Produto'}">
+          <img src="${p.imagem || p.img || 'https://via.placeholder.com/200x200?text=Produto'}">
           <h4>${p.nome}</h4>
           <p style="color:#666;font-size:12px;">${p.categoria || ''}</p>
           <p style="font-weight:bold;color:#ff0080;font-size:16px;">R$ ${p.preco}</p>
@@ -912,7 +937,7 @@ function mostrarCategoria(categoria){
             return `
             <div class="prod-card">
               <button class="btn-fav" onclick="adicionarAoFavoritos(${p.id})" title="${isFavorito ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}" style="color:${isFavorito ? '#ff0080' : '#666'};">${isFavorito ? '❤️' : '🤍'}</button>
-              <img src="${p.img || 'https://via.placeholder.com/200x200?text=Produto'}">
+              <img src="${p.imagem || p.img || 'https://via.placeholder.com/200x200?text=Produto'}">
               <h4>${p.nome}</h4>
               <p style="color:var(--gray);font-size:12px;">${p.categoria || ''}</p>
               <p style="font-weight:bold;color:#ff0080;font-size:16px;margin:5px 0;">R$ ${p.preco}</p>
@@ -951,11 +976,30 @@ function mostrarCategoria(categoria){
   updateBadges()
 }
 
-function perfilPage(){
+async function perfilPage(){
   showContainer()
   const user = getSession()
   const isAdmin = user === 'admin@dyva.com'
-  const pedidos = getPedidos(user)
+  let pedidos = [];
+  try {
+    if (window.modoIntegrado && typeof window.getPedidosIntegrado === 'function') {
+      pedidos = await window.getPedidosIntegrado(user);
+      if (!pedidos || !Array.isArray(pedidos)) {
+        pedidos = [];
+        showToast('Erro ao carregar pedidos da API. Tente novamente.', 'error');
+        console.error('❌ API não retornou pedidos válidos:', pedidos);
+      } else {
+        console.log(`✅ ${pedidos.length} pedidos carregados da API`);
+      }
+    } else {
+      pedidos = getPedidos(user);
+      console.log(`📦 ${pedidos.length} pedidos carregados localmente`);
+    }
+  } catch (err) {
+    pedidos = getPedidos(user);
+    showToast('Erro ao buscar pedidos. Usando dados locais.', 'error');
+    console.error('❌ Erro ao buscar pedidos:', err);
+  }
   
   root.innerHTML=`
     <h1>Meu Perfil</h1>
@@ -1011,7 +1055,7 @@ function perfilPage(){
               <p style='color:var(--text);font-size:13px;margin-bottom:6px;'><b>${p.produtos.length}</b> ${p.produtos.length === 1 ? 'item' : 'itens'}</p>
               <div style='display:flex;gap:8px;overflow-x:auto;padding:4px 0;'>
                 ${p.produtos.slice(0,3).map(prod => `
-                  <img src='${prod.img || 'https://via.placeholder.com/60'}' style='width:50px;height:50px;object-fit:cover;border-radius:6px;border:1px solid var(--border);'>
+                  <img src='${prod.imagem || prod.img || 'https://via.placeholder.com/60'}' style='width:50px;height:50px;object-fit:cover;border-radius:6px;border:1px solid var(--border);'>
                 `).join('')}
                 ${p.produtos.length > 3 ? `<div style='width:50px;height:50px;display:flex;align-items:center;justify-content:center;background:var(--border);border-radius:6px;color:var(--text);font-size:12px;font-weight:600;'>+${p.produtos.length - 3}</div>` : ''}
               </div>
@@ -1105,7 +1149,7 @@ function verDetalhesPedido(pedido) {
         <h3 style='color:var(--text);margin-bottom:15px;'>🛍️ Itens do Pedido</h3>
         ${pedido.produtos.map(p => `
           <div style='display:flex;gap:15px;padding:12px;background:var(--bg);border-radius:8px;border:1px solid var(--border);margin-bottom:10px;'>
-            <img src='${p.img || 'https://via.placeholder.com/80'}' style='width:80px;height:80px;object-fit:cover;border-radius:6px;'>
+            <img src='${p.imagem || p.img || 'https://via.placeholder.com/80'}' style='width:80px;height:80px;object-fit:cover;border-radius:6px;'>
             <div style='flex:1;'>
               <h4 style='color:var(--text);margin:0 0 5px 0;font-size:15px;'>${p.nome}</h4>
               <p style='color:var(--gray);font-size:13px;margin-bottom:5px;'>${p.categoria || ''}</p>
@@ -1244,12 +1288,17 @@ function loginPage(){
     </div>
     <button class='btn' id='logBtn'>Entrar</button>
     <p class='muted-center'><span id='voltarHome' class='text-link'>Voltar à Home</span></p>`
-  $('#logBtn').onclick=()=>{
+  $('#logBtn').onclick=async ()=>{
     const email=$('#loginEmail').value.trim()
     const pass=$('#loginPass').value
-    const user=findUser(email)
-    if(!user || user.senha!==pass){showToast('Email ou senha incorretos!', 'error');return}
-    setSession(email)
+    
+    // USAR SISTEMA INTEGRADO
+    const loginResult = await loginIntegrado(email, pass);
+    if(!loginResult.ok){
+      showToast('Email ou senha incorretos!', 'error');
+      return;
+    }
+    
     showToast('Bem-vindo de volta! 👋', 'success')
     updateBadges()
     
@@ -1276,6 +1325,7 @@ function registerPage(){
   showContainer()
   root.innerHTML=`
     <h1>Crie sua Conta</h1>
+    <input id='regNome' class='input' placeholder='Nome Completo'>
     <input id='regEmail' class='input' placeholder='Email'>
     <div style='position:relative;'>
       <input id='regPass' class='input' placeholder='Senha' type='password'>
@@ -1285,40 +1335,142 @@ function registerPage(){
       <input id='regPass2' class='input' placeholder='Confirme sua Senha' type='password'>
       <button id='toggleRegPass2' type='button' style='position:absolute;right:10px;top:50%;transform:translateY(-50%);background:transparent;border:none;color:var(--gray);cursor:pointer;'>👁️</button>
     </div>
-    <button class='btn' id='btnCriar'>Criar Conta</button>
+    <button class='btn' id='btnCriar' onclick="handleCriarConta()">Criar Conta</button>
     <p class='muted-center'>Já tem conta? <span id='voltarLogin' class='text-link'>Faça Login</span></p>
     <p class='muted-center'><span id='voltarHome2' class='text-link'>Voltar à Home</span></p>`
-  $('#voltarLogin').onclick=()=>loginPage()
-  $('#voltarHome2').onclick=()=>homePage()
-  $('#btnCriar').onclick=()=>{
-    const email=$('#regEmail').value.trim()
-    const p1=$('#regPass').value
-    const p2=$('#regPass2').value
-    if(!email||!p1||!p2){showToast('Preencha todos os campos!','error');return}
-    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){showToast('Email inválido!','error');return}
-    if(p1.length<6){showToast('Senha deve ter no mínimo 6 caracteres!','error');return}
-    if(p1!==p2){showToast('As senhas não conferem!','error');return}
-    if(findUser(email)){showToast('Este email já está cadastrado!','error');return}
-    addUser({email:email,senha:p1})
-    showToast('Conta criada com sucesso! 🎉','success')
-    setTimeout(()=>loginPage(), 1500)
+  
+  // Usar setTimeout para garantir que os elementos existam
+  setTimeout(() => {
+    try {
+      $('#voltarLogin').onclick=()=>loginPage()
+      $('#voltarHome2').onclick=()=>homePage()
+    } catch (e) {
+      console.error('Erro ao configurar clicks:', e);
+    }
+  }, 100);
+  
+  // Função global para o botão
+  window.handleCriarConta = async function() {
+    console.log('🔘 Botão Criar Conta clicado!');
+    
+    let nome, email, p1, p2;
+    
+    try {
+      console.log('📝 Capturando dados do formulário...');
+      
+      const nomeElement = document.getElementById('regNome');
+      const emailElement = document.getElementById('regEmail');
+      const p1Element = document.getElementById('regPass');
+      const p2Element = document.getElementById('regPass2');
+      
+      if (!nomeElement || !emailElement || !p1Element || !p2Element) {
+        console.error('❌ Elementos do formulário não encontrados!');
+        showToast('Erro: campos do formulário não encontrados!','error');
+        return;
+      }
+      
+      nome = nomeElement.value.trim() || 'Usuário';
+      email = emailElement.value.trim();
+      p1 = p1Element.value;
+      p2 = p2Element.value;
+      
+      console.log(`📋 Dados do formulário: Nome="${nome}", Email="${email}", Senha="${p1 ? p1.length : 0} chars"`);
+      
+      if(!email||!p1||!p2){
+        console.log('❌ Campos obrigatórios não preenchidos');
+        showToast('Preencha todos os campos!','error');
+        return;
+      }
+    } catch (error) {
+      console.error('💥 Erro ao capturar dados do formulário:', error);
+      showToast('Erro ao ler dados do formulário!','error');
+      return;
+    }
+    console.log('🔍 Validando email...');
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+      console.log('❌ Email inválido');
+      showToast('Email inválido!','error');
+      return;
+    }
+    
+    console.log('🔍 Validando senha...');
+    if(p1.length<6){
+      console.log('❌ Senha muito curta');
+      showToast('Senha deve ter no mínimo 6 caracteres!','error');
+      return;
+    }
+    
+    console.log('🔍 Validando confirmação de senha...');
+    if(p1!==p2){
+      console.log('❌ Senhas não conferem');
+      showToast('As senhas não conferem!','error');
+      return;
+    }
+    
+    console.log('🔍 Verificando se email já existe...');
+    try {
+      if(findUser(email)){
+        console.log('❌ Email já cadastrado localmente');
+        showToast('Este email já está cadastrado!','error');
+        return;
+      }
+    } catch (error) {
+      console.error('💥 Erro na função findUser:', error);
+    }
+    
+    console.log('✅ Validações OK, chamando addUserIntegrado...');
+    
+    try {
+      console.log('🚀 Chamando addUserIntegrado com:', {nome, email, senhaLength: p1.length});
+      
+      // Verificar se a função existe
+      if (typeof addUserIntegrado !== 'function') {
+        console.error('💥 addUserIntegrado não é uma função!');
+        showToast('Erro interno: função de registro não encontrada!','error');
+        return;
+      }
+      
+      // Usar função integrada que tenta API primeiro
+      const resultado = await addUserIntegrado(nome, email, p1)
+      console.log('📬 Resultado do registro:', resultado);
+      
+      if(resultado.ok){
+        console.log('✅ Registro bem-sucedido!');
+        showToast('Conta criada com sucesso! 🎉','success')
+        setTimeout(()=>loginPage(), 1500)
+      }else{
+        console.log('❌ Registro falhou:', resultado.erro);
+        showToast('Erro ao criar conta: '+(resultado.erro||'Erro desconhecido'),'error')
+      }
+    } catch (error) {
+      console.error('💥 Erro inesperado no registro:', error);
+      showToast('Erro inesperado ao criar conta!','error');
+    }
   }
-  // Mostrar/ocultar senha (registro)
-  $('#toggleRegPass').onclick = () => {
-    const inp = $('#regPass')
-    const isPwd = inp.type === 'password'
-    inp.type = isPwd ? 'text' : 'password'
-    $('#toggleRegPass').textContent = isPwd ? '🙈' : '👁️'
-  }
-  $('#toggleRegPass2').onclick = () => {
-    const inp = $('#regPass2')
-    const isPwd = inp.type === 'password'
-    inp.type = isPwd ? 'text' : 'password'
-    $('#toggleRegPass2').textContent = isPwd ? '🙈' : '👁️'
-  }
+  
+  // Configurar handlers com setTimeout
+  setTimeout(() => {
+    try {
+      // Mostrar/ocultar senha (registro)
+      $('#toggleRegPass').onclick = () => {
+        const inp = $('#regPass')
+        const isPwd = inp.type === 'password'
+        inp.type = isPwd ? 'text' : 'password'
+        $('#toggleRegPass').textContent = isPwd ? '🙈' : '👁️'
+      }
+      $('#toggleRegPass2').onclick = () => {
+        const inp = $('#regPass2')
+        const isPwd = inp.type === 'password'
+        inp.type = isPwd ? 'text' : 'password'
+        $('#toggleRegPass2').textContent = isPwd ? '🙈' : '👁️'
+      }
+    } catch (e) {
+      console.error('Erro ao configurar botões de senha:', e);
+    }
+  }, 100);
 }
 
-function productPage(){
+async function productPage(){
   showContainer()
   const user=getSession()
   if(!user){loginPage();return}
@@ -1330,7 +1482,42 @@ function productPage(){
     return
   }
   
-  const produtos=getProducts(user)
+  // Carregar produtos via API - sempre tentar recarregar para ter dados atualizados
+  let produtos = [];
+  
+  // Debug do estado atual e forçar modo integrado para admin
+  window.modoIntegrado = true; // FORÇAR modo integrado na página de admin
+  console.log('🔧 ADMIN: Estado atual - modoIntegrado:', window.modoIntegrado);
+  console.log('🔧 ADMIN: window.apiCall disponível:', typeof window.apiCall);
+  
+  // SEMPRE limpar cache para garantir dados atualizados
+  sessionStorage.removeItem('dyva_produtos_api');
+  console.log('🔧 ADMIN: Cache limpo - forçando dados frescos');
+  
+  // Tentar recarregar da API primeiro
+  if (window.apiCall) {
+    console.log('🔧 ADMIN: Carregando produtos DIRETAMENTE da API...');
+    try {
+      const response = await window.apiCall('/api/produtos');
+      if (response && response.ok && response.itens && Array.isArray(response.itens)) {
+        produtos = response.itens;
+        sessionStorage.setItem('dyva_produtos_api', JSON.stringify(produtos));
+        window.modoIntegrado = true;
+        console.log('🔧 ADMIN: ✅ Produtos FRESCOS da API:', produtos.length);
+        // Log para debug
+        produtos.forEach(p => console.log(`   - ID ${p.id}: ${p.nome}`));
+      } else {
+        throw new Error('Resposta inválida da API');
+      }
+    } catch (error) {
+      console.warn('🔧 ADMIN: Falha ao carregar da API, usando localStorage...', error);
+      produtos = getProducts(user);
+    }
+  } else {
+    console.warn('🔧 ADMIN: API não disponível, usando localStorage');
+    produtos = getProducts(user);
+  }
+  
   root.innerHTML=`
   <h1>Produtos</h1>
   <div class='link-row'><span>${user}</span><span class='text-link' id='sair'>Sair</span></div>
@@ -1350,13 +1537,34 @@ function productPage(){
     <button class='btn' id='addP'>Adicionar Produto</button>
   </div>
   <div id='lista' class='product-list'></div>
+  <div style='margin: 10px 0; padding: 10px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 4px;'>
+    <button class='btn' id='recarregarAPI' style='background:#4caf50;'>🔄 Recarregar da API</button>
+    <span style='color: var(--gray); font-size: 12px; margin-left: 10px;'>Sincronizar com banco de dados</span>
+  </div>
   <button class='btn' id='verCarrinho'>Ir para o Carrinho</button>
   <button class='btn' id='voltarPerfil' style='background:#e91e63;'>Voltar ao Perfil</button>
   <button class='btn btn-voltar' id='voltarHome'>Voltar à Home</button>`
   $('#sair').onclick=()=>{logout();homePage()}
   $('#voltarHome').onclick=()=>homePage()
   $('#voltarPerfil').onclick=()=>perfilPage()
-  $('#addP').onclick=()=>{
+  $('#recarregarAPI').onclick=async()=>{
+    const btn = $('#recarregarAPI');
+    btn.disabled = true;
+    btn.textContent = '🔄 Carregando...';
+    
+    const sucesso = await recarregarProdutosAPI();
+    
+    if (sucesso) {
+      showToast('✅ Produtos recarregados da API!', 'success');
+      // Recarregar a página de produtos
+      setTimeout(() => productPage(), 500);
+    } else {
+      showToast('❌ Erro ao recarregar produtos', 'error');
+      btn.disabled = false;
+      btn.textContent = '🔄 Recarregar da API';
+    }
+  }
+  $('#addP').onclick=async ()=>{
     const nome=$('#pNome').value.trim()
     const descricao=$('#pDescricao').value.trim()
     let preco=$('#pPreco').value.trim().replace(',','.') // Aceita vírgula e converte para ponto
@@ -1365,9 +1573,63 @@ function productPage(){
     if(!nome||!preco||!categoria){showToast('Preencha nome, preço e categoria!','error');return}
     if(isNaN(preco)||preco<=0){showToast('Preço deve ser um número válido!','error');return}
     preco = parseFloat(preco).toFixed(2) // Formata para 2 casas decimais
+    
+    // 🚀 USAR API PARA ADICIONAR PRODUTO
+    const token = localStorage.getItem('dyva_auth_token')
+    console.log('🔧 DEBUG - modoIntegrado:', window.modoIntegrado, 'token:', !!token)
+    
+    if(window.modoIntegrado && token) {
+      try {
+        const novoProduto = {
+          nome,
+          descricao,
+          preco: parseFloat(preco),
+          categoria,
+          imagem: img,
+          tamanhos: [
+            {tamanho: 'PP', estoque: 10},
+            {tamanho: 'P', estoque: 10},
+            {tamanho: 'M', estoque: 10},
+            {tamanho: 'G', estoque: 10},
+            {tamanho: 'GG', estoque: 10}
+          ]
+        }
+        
+        console.log('📤 Enviando produto para API:', novoProduto)
+        const response = await apiCall('/api/produtos', {
+          method: 'POST',
+          body: JSON.stringify(novoProduto)
+        })
+        
+        if(response && response.produto_id) {
+          console.log('✅ Produto criado na API com sucesso! ID:', response.produto_id)
+          showToast('Produto adicionado com sucesso! ✅','success')
+          
+          // Recarregar produtos da API
+          await recarregarProdutosAPI()
+          
+          // Limpar formulário
+          $('#pNome').value='';$('#pDescricao').value='';$('#pPreco').value='';$('#pCategoria').value='';$('#pImg').value='';
+          
+          // Re-renderizar lista
+          const produtosAtualizados = getProducts(user)
+          renderList(produtosAtualizados, user)
+          return
+        } else {
+          console.error('❌ Erro ao criar produto na API:', response)
+          showToast(`Erro: ${response?.erro || 'Falha ao adicionar produto'}`, 'error')
+          return
+        }
+      } catch(error) {
+        console.error('❌ Erro de conexão ao adicionar produto:', error)
+        showToast('Erro de conexão. Produto salvo apenas localmente.', 'warning')
+      }
+    }
+    
+    // Fallback: salvar no localStorage se API falhar ou modo offline
     produtos.push({id:Date.now(),nome,descricao,preco,categoria,img,tamanhos:['PP','P','M','G','GG']})
     saveProducts(user,produtos)
-    showToast('Produto adicionado com sucesso! ✅','success')
+    showToast('Produto adicionado (modo offline)','success')
     $('#pNome').value='';$('#pDescricao').value='';$('#pPreco').value='';$('#pCategoria').value='';$('#pImg').value='';
     renderList(produtos,user)
   }
@@ -1379,25 +1641,283 @@ function renderList(produtos,user){
   const lista=$('#lista')
   lista.innerHTML=''
   if(produtos.length==0){lista.innerHTML='<p class="small" style="color:var(--gray);">Nenhum produto cadastrado.</p>';return}
+  
+  console.log(`🔧 RENDERIZANDO ${produtos.length} produtos para usuário: ${user}`);
+  console.log('🔧 Modo integrado:', window.modoIntegrado);
+  
   produtos.forEach(p=>{
     const div=document.createElement('div')
     div.className='product'
     div.innerHTML=`
-      <div style='display:flex;align-items:center;gap:10px;'>
-        <img src='${p.img||'https://via.placeholder.com/60?text=Sem+Img'}'>
-        <div><div class='name' style='color:var(--text);'>${p.nome}</div><div class='small' style='color:var(--gray);'>R$ ${p.preco}</div></div>
+      <div style='display:flex;align-items:center;gap:10px;flex:1;'>
+        <img src='${p.imagem||p.img||'https://via.placeholder.com/60?text=Sem+Img'}'>
+        <div><div class='name' style='color:var(--text);'>${p.nome}</div><div class='small' style='color:var(--gray);'>R$ ${p.preco} - ${p.categoria}</div></div>
       </div>
-      <button class='btn-delete' data-id='${p.id}'>Excluir</button>`
+      <div style='display:flex;gap:5px;'>
+        <button class='btn' style='background:#2196f3;font-size:12px;padding:8px 12px;' data-id='${p.id}' onclick='editarProduto(${p.id})'>✏️ Editar</button>
+        <button class='btn-delete' data-id='${p.id}'>🗑️ Excluir</button>
+      </div>`
     lista.appendChild(div)
   })
+  
+  // Vincular eventos de delete após adicionar ao DOM
   document.querySelectorAll('.btn-delete').forEach(btn=>{
-    btn.onclick=()=>{
-      const id=Number(btn.getAttribute('data-id'))
-      const novos=produtos.filter(p=>p.id!==id)
-      saveProducts(user,novos)
-      renderList(novos,user)
-    }
+    console.log(`🔧 Vinculando evento delete para produto ID: ${btn.getAttribute('data-id')}`);
+    btn.addEventListener('click', async function(event) {
+      event.preventDefault();
+      event.stopPropagation();
+      
+      const id = Number(this.getAttribute('data-id'));
+      console.log(`🗑️ CLIQUE NO DELETE - ID: ${id}`);
+      
+      if(!confirm(`Tem certeza que deseja excluir o produto ID ${id}?`)) {
+        console.log('❌ Delete cancelado pelo usuário');
+        return;
+      }
+      
+      console.log('🚀 INICIANDO DELETE DO PRODUTO ID:', id);
+      
+      // MÉTODO SIMPLES - USAR FETCH DIRETO
+      try {
+        const token = localStorage.getItem('dyva_auth_token');
+        console.log('🔑 Token encontrado:', !!token);
+        
+        if (!token) {
+          throw new Error('Token não encontrado');
+        }
+        
+        console.log('📡 Fazendo requisição DELETE...');
+        const response = await fetch('http://127.0.0.1:5000/api/produtos/' + id, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+          }
+        });
+        
+        console.log('📊 Status da resposta:', response.status);
+        
+        if (response.ok) {
+          const result = await response.json();
+          console.log('📄 Resultado:', result);
+          
+          // SUCESSO - REMOVER DA TELA
+          console.log('✅ SUCESSO! Removendo produto da tela...');
+          this.closest('.product').remove();
+          showToast('Produto excluído com sucesso!', 'success');
+          
+          // Recarregar lista após 1 segundo
+          setTimeout(() => {
+            console.log('🔄 Recarregando página de produtos...');
+            if (typeof productPage === 'function') {
+              productPage();
+            } else {
+              location.reload();
+            }
+          }, 1000);
+          
+        } else {
+          console.error('❌ Erro na API:', response.status);
+          showToast('Erro ao excluir produto: ' + response.status, 'error');
+        }
+        
+      } catch (error) {
+        console.error('❌ ERRO GERAL:', error);
+        showToast('Erro: ' + error.message, 'error');
+      }
+    });
   })
+}
+
+// Função para editar produto
+window.editarProduto = function(produtoId) {
+  const user = getSession()
+  const produtos = getProducts(user)
+  const produto = produtos.find(p => p.id === produtoId)
+  
+  if (!produto) {
+    showToast('Produto não encontrado!', 'error')
+    return
+  }
+  
+  // Criar modal de edição
+  const modal = document.createElement('div')
+  modal.id = 'modalEditar'
+  modal.style.cssText = `
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.7); z-index: 1000;
+    display: flex; align-items: center; justify-content: center;
+  `
+  
+  modal.innerHTML = `
+    <div style='background: var(--card-bg); padding: 20px; border-radius: 8px; width: 90%; max-width: 500px; border: 1px solid var(--border);'>
+      <h3 style='color: var(--text); margin-top: 0;'>✏️ Editar Produto</h3>
+      
+      <input id='editNome' class='input' placeholder='Nome do produto' value='${produto.nome}'>
+      <textarea id='editDescricao' class='input' placeholder='Descrição' style='resize:vertical;min-height:60px;font-family:inherit;'>${produto.descricao || ''}</textarea>
+      <input id='editPreco' class='input' placeholder='Preço' value='${produto.preco}'>
+      <select id='editCategoria' class='input'>
+        <option value='Macaquinhos' ${produto.categoria === 'Macaquinhos' ? 'selected' : ''}>Macaquinhos</option>
+        <option value='Croppeds' ${produto.categoria === 'Croppeds' ? 'selected' : ''}>Croppeds</option>
+        <option value='Saias' ${produto.categoria === 'Saias' ? 'selected' : ''}>Saias</option>
+        <option value='Blusas' ${produto.categoria === 'Blusas' ? 'selected' : ''}>Blusas</option>
+      </select>
+      <input id='editImg' class='input' placeholder='URL da imagem' value='${produto.imagem || produto.img || ''}'>
+      
+      <div style='display: flex; gap: 10px; margin-top: 15px;'>
+        <button class='btn' onclick='salvarEdicaoProduto(${produtoId})' style='background: #4caf50;'>💾 Salvar</button>
+        <button class='btn' onclick='fecharModalEditar()' style='background: #f44336;'>❌ Cancelar</button>
+      </div>
+    </div>
+  `
+  
+  document.body.appendChild(modal)
+}
+
+// Função para salvar edição
+window.salvarEdicaoProduto = function(produtoId) {
+  const user = getSession()
+  const produtos = getProducts(user)
+  const produto = produtos.find(p => p.id === produtoId)
+  
+  if (!produto) {
+    showToast('Produto não encontrado!', 'error')
+    return
+  }
+  
+  const nome = document.getElementById('editNome').value.trim()
+  const descricao = document.getElementById('editDescricao').value.trim()
+  let preco = document.getElementById('editPreco').value.trim().replace(',', '.')
+  const categoria = document.getElementById('editCategoria').value
+  const img = document.getElementById('editImg').value.trim()
+  
+  if (!nome || !preco || !categoria) {
+    showToast('Preencha nome, preço e categoria!', 'error')
+    return
+  }
+  
+  if (isNaN(preco) || preco <= 0) {
+    showToast('Preço deve ser um número válido!', 'error')
+    return
+  }
+  
+  preco = parseFloat(preco).toFixed(2)
+  
+  // Atualizar produto
+  produto.nome = nome
+  produto.descricao = descricao
+  produto.preco = preco
+  produto.categoria = categoria
+  produto.img = img
+  produto.imagem = img  // Garantir compatibilidade com ambos os campos
+  
+  // Salvar no localStorage
+  saveProducts(user, produtos)
+  
+  // Se estiver em modo integrado, também salvar via API
+  if (window.modoIntegrado && window.apiCall) {
+    window.apiCall(`/api/produtos/${produtoId}`, {
+      method: 'PUT',
+      body: JSON.stringify({
+        nome: nome,
+        preco: parseFloat(preco),
+        categoria: categoria,
+        descricao: descricao,
+        imagem: img
+      })
+    }).then(result => {
+      if (result && result.ok) {
+        console.log('✅ Produto atualizado via API:', result)
+        // Recarregar produtos da API para atualizar cache
+        window.recarregarProdutosAPI && window.recarregarProdutosAPI()
+      } else {
+        console.warn('⚠️ Falha ao atualizar via API, mantido local')
+      }
+    }).catch(error => {
+      console.warn('⚠️ Erro na API, produto mantido apenas local:', error)
+    })
+  }
+  
+  showToast('Produto atualizado com sucesso! ✅', 'success')
+  fecharModalEditar()
+  
+  // Recarregar a página admin para mostrar dados atualizados
+  setTimeout(() => productPage(), 500)
+}
+
+// Função para fechar modal
+window.fecharModalEditar = function() {
+  const modal = document.getElementById('modalEditar')
+  if (modal) {
+    modal.remove()
+  }
+}
+
+// Função para recarregar produtos da API
+// Função para limpar TODOS os caches e forçar reload
+window.forcarReloadCompleto = function() {
+  console.log('🧹 LIMPEZA COMPLETA DE CACHE');
+  
+  // Limpar todos os storages
+  sessionStorage.removeItem('dyva_produtos_api');
+  localStorage.removeItem('dyva_prod_admin@dyva.com');
+  
+  // Limpar cache do navegador se possível
+  if ('caches' in window) {
+    caches.keys().then(names => {
+      names.forEach(name => caches.delete(name));
+    });
+  }
+  
+  console.log('🧹 Cache limpo - dados serão recarregados');
+  
+  // Recarregar página para garantir dados frescos
+  setTimeout(() => {
+    window.location.reload(true);
+  }, 100);
+}
+
+window.recarregarProdutosAPI = async function() {
+  if (!window.apiCall) {
+    console.warn('🔄 API não disponível para recarregar produtos');
+    return false;
+  }
+  
+  try {
+    console.log('🔄 Recarregando produtos da API...');
+    
+    // Limpar cache primeiro
+    sessionStorage.removeItem('dyva_produtos_api');
+    
+    const response = await window.apiCall('/api/produtos');
+    
+    if (response && response.ok && response.itens && Array.isArray(response.itens)) {
+      sessionStorage.setItem('dyva_produtos_api', JSON.stringify(response.itens));
+      console.log(`🔄 ${response.itens.length} produtos recarregados da API`);
+      
+      // Log dos produtos para debug  
+      response.itens.forEach(p => console.log(`   - ID ${p.id}: ${p.nome}`));
+      
+      // Forçar modo integrado
+      window.modoIntegrado = true;
+      
+      // Se estiver na página de produtos, recarregar a lista
+      if (window.location.hash === '#produtos' || document.getElementById('lista')) {
+        const user = getSession();
+        if (user === 'admin@dyva.com') {
+          renderList(response.itens, user);
+        }
+      }
+      
+      return true;
+    } else {
+      console.warn('🔄 Resposta inválida da API:', response);
+      return false;
+    }
+  } catch (error) {
+    console.error('🔄 Erro ao recarregar produtos:', error);
+    return false;
+  }
 }
 
 /* ==== Nova Tela: Carrinho ==== */
@@ -1441,7 +1961,7 @@ function carrinhoPage(){
     <tr style='background:var(--bg);'>
       <td style='color:var(--text);padding:10px!important;'>
         <div style='display:flex;align-items:center;gap:10px;max-width:100%;'>
-          <img src='${p.img||'https://via.placeholder.com/70?text=Sem+Img'}' style='width:50px;height:50px;object-fit:cover;border-radius:5px;flex-shrink:0;'>
+          <img src='${p.imagem||p.img||'https://via.placeholder.com/70?text=Sem+Img'}' style='width:50px;height:50px;object-fit:cover;border-radius:5px;flex-shrink:0;'>
           <span style='text-align:left;font-size:12px;overflow:hidden;text-overflow:ellipsis;line-height:1.3;'>${p.nome}</span>
         </div>
       </td>
@@ -1776,7 +2296,7 @@ function finalizarPage(){
   
   $('#fCupom').oninput = (e) => e.target.value = e.target.value.toUpperCase()
   
-  $('#finalizarPedido').onclick=()=>{
+  $('#finalizarPedido').onclick=async()=>{
     const user = getSession()
     const nome = $('#fNome').value.trim()
     const telefone = $('#fTelefone').value.trim()
@@ -1829,9 +2349,9 @@ function finalizarPage(){
     }
     
     // Salvar pedido
-    const cartItems = getCart(user)
+    const cartItems = getCarrinhoIntegrado ? await getCarrinhoIntegrado() : getCart(user)
     // Buscar produtos sempre do admin (catálogo central)
-    const todosProdutos = getProducts('admin@dyva.com')
+    const todosProdutos = getProductsIntegrado ? getProductsIntegrado('admin@dyva.com') : getProducts('admin@dyva.com')
     
     // RECALCULAR SUBTOTAL AQUI (bug fix)
     let subtotalFinal = 0
@@ -1868,11 +2388,14 @@ function finalizarPage(){
       statusIndex: 0
     }
     
-    addPedido(user, pedido)
-    saveCart(user, []) // Limpar carrinho
-    updateBadges()
-    
-    mostrarRecibo(pedido)
+    // Usar função integrada para finalizar pedido
+    const resultado = await finalizarPedidoIntegrado(pedido)
+    if (resultado.ok) {
+      updateBadges()
+      mostrarRecibo(pedido)
+    } else {
+      showToast('❌ Erro ao finalizar pedido', 'error')
+    }
   }
 }
 
@@ -1894,7 +2417,7 @@ function mostrarRecibo(pedido){
       <h3 style='color:var(--text);margin-bottom:15px;'>📦 Itens do Pedido</h3>
       ${pedido.produtos.map(p => `
         <div style='display:flex;gap:10px;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid var(--border);'>
-          <img src='${p.img || 'https://via.placeholder.com/60?text=Produto'}' style='width:60px;height:60px;object-fit:cover;border-radius:5px;'>
+          <img src='${p.imagem || p.img || 'https://via.placeholder.com/60?text=Produto'}' style='width:60px;height:60px;object-fit:cover;border-radius:5px;'>
           <div style='flex:1;'>
             <div style='font-weight:bold;color:var(--text);'>${p.nome}</div>
             <div style='color:var(--gray);font-size:13px;'>Quantidade: ${p.qty}</div>
@@ -1967,7 +2490,7 @@ function abrirDetalheProduto(prodId){
     <h1>Detalhes do Produto</h1>
     <div style='display:grid;grid-template-columns:1fr 1fr;gap:20px;'>
       <div style='text-align:center;'>
-        <img src='${p.img || 'https://via.placeholder.com/320x240?text=Produto'}' style='max-width:100%;border-radius:8px;border:1px solid var(--border);'>
+        <img src='${p.imagem || p.img || 'https://via.placeholder.com/320x240?text=Produto'}' style='max-width:100%;border-radius:8px;border:1px solid var(--border);'>
       </div>
       <div>
         <h2 style='color:var(--text);margin-bottom:6px;'>${p.nome}</h2>
@@ -2006,7 +2529,7 @@ function abrirDetalheProduto(prodId){
       showToast('Selecione um tamanho!', 'error')
       return
     }
-    addToCartWithSize(user, p.id, selecionado)
+    addToCartIntegrado(user, p.id, selecionado)
     showToast(`🛒 ${p.nome} (${selecionado}) adicionado ao carrinho!`, 'success')
     updateBadges()
     carrinhoPage()
@@ -2022,7 +2545,7 @@ function abrirDetalheProduto(prodId){
         <div style='display:grid;grid-template-columns:repeat(3, 1fr);gap:15px;'>
           ${relacionados.map(pr => `
             <div style='text-align:center;border:1px solid var(--border);border-radius:8px;padding:10px;background:var(--card-bg);cursor:pointer;transition:all 0.2s;' onmouseover='this.style.transform="translateY(-4px)";this.style.boxShadow="0 4px 12px rgba(0,0,0,0.15)"' onmouseout='this.style.transform="translateY(0)";this.style.boxShadow="none"' onclick='abrirDetalheProduto(${pr.id})'>
-              <img src='${pr.img || 'https://via.placeholder.com/120?text=Produto'}' style='width:100%;height:120px;object-fit:cover;border-radius:6px;margin-bottom:8px;'>
+              <img src='${pr.imagem || pr.img || 'https://via.placeholder.com/120?text=Produto'}' style='width:100%;height:120px;object-fit:cover;border-radius:6px;margin-bottom:8px;'>
               <p style='color:var(--text);font-size:13px;font-weight:600;margin-bottom:4px;'>${pr.nome}</p>
               <p style='color:#ff0080;font-weight:700;'>R$ ${pr.preco}</p>
             </div>
@@ -2407,8 +2930,377 @@ console.log('  debugCupons() - Ver todos os cupons')
 console.log('  resetarCupons() - Resetar cupons padrão')
 console.log('  ativarCupom("DYVA20") - Ativar cupom específico')
 
-// Apenas chama o sistema normalmente
-inicializarSistema();
+// ===================================
+// 🔗 INTEGRAÇÃO FRONTEND ↔ BACKEND
+// ===================================
+
+const API_BASE = 'http://127.0.0.1:5000';
+let modoIntegrado = false;
+
+// Função para chamadas à API
+async function apiCall(endpoint, options = {}) {
+    try {
+        const token = localStorage.getItem('dyva_auth_token');
+        const response = await fetch(API_BASE + endpoint, {
+            headers: {
+                'Content-Type': 'application/json',
+                ...(token && {'Authorization': `Bearer ${token}`})
+            },
+            ...options
+        });
+        
+        if (!response.ok) {
+            console.error(`API Error ${response.status} em ${endpoint}`);
+            return { ok: false, status: response.status, erro: `HTTP ${response.status}` };
+        }
+        
+        const data = await response.json();
+        return { ...data, ok: true, status: response.status };
+    } catch (error) {
+        console.warn(`API ${endpoint} indisponível:`, error.message);
+        return null; // Fallback para localStorage
+    }
+}
+
+// Testar conectividade da API
+async function testarAPI() {
+    console.log('🔍 Testando conectividade da API...');
+    try {
+        console.log('📡 Chamando /api/ping...');
+        const result = await apiCall('/api/ping');
+        console.log('📡 Resposta do ping:', result);
+        
+        if (result && result.ok) {
+            modoIntegrado = true;
+            const token = localStorage.getItem('dyva_auth_token');
+            console.log('🟢 MODO INTEGRADO ATIVADO: API conectada!');
+            console.log('🔐 Token JWT:', token ? `${token.substring(0,10)}...` : 'NÃO ENCONTRADO');
+            console.log('🔗 modoIntegrado =', modoIntegrado);
+            showToast('🔗 API conectada - Modo integrado ativo', 'success');
+            return true;
+        } else {
+            console.log('❌ API ping falhou - resultado inválido');
+        }
+    } catch (error) {
+        console.log('❌ Erro ao testar API:', error);
+        console.log('🔴 MODO OFFLINE: Usando localStorage');
+        showToast('📱 Modo offline - Dados locais', 'info');
+    }
+    console.log('🔗 modoIntegrado =', modoIntegrado);
+    return false;
+}
+
+// Sobrescrever função de login para usar API
+const loginLocalOriginal = window.findUser;
+window.loginIntegrado = async function(email, senha) {
+    console.log(`🔐 Tentando login: ${email} - Modo integrado: ${modoIntegrado}`);
+    
+    if (modoIntegrado) {
+        try {
+            console.log('📡 Chamando API /api/login...');
+            const result = await apiCall('/api/login', {
+                method: 'POST',
+                body: JSON.stringify({email, senha})
+            });
+            
+            console.log('📡 Resposta da API:', result);
+            
+            if (result && result.token) {
+                localStorage.setItem('dyva_auth_token', result.token);
+                localStorage.setItem('dyva_session', email);
+                console.log('✅ Login via API realizado:', result.usuario.nome);
+                console.log('🎫 Token salvo:', result.token.substring(0,10) + '...');
+                return {ok: true, usuario: result.usuario};
+            } else {
+                console.warn('❌ API não retornou token válido');
+            }
+        } catch (error) {
+            console.warn('Login API falhou, usando local:', error);
+        }
+    }
+    
+    // Fallback para sistema local existente
+    console.log('💾 Tentando login local...');
+    const user = findUser(email);
+    if (user && user.senha === senha) {
+        setSession(email);
+        console.log('✅ Login local realizado');
+        return {ok: true, usuario: user};
+    }
+    return {ok: false, erro: 'Credenciais inválidas'};
+};
+
+// Sobrescrever função de registro para usar API
+window.addUserIntegrado = async function(nome, email, senha) {
+    console.log(`📝 Tentando registro: ${nome} (${email}) - Modo integrado: ${modoIntegrado}`);
+    
+    if (modoIntegrado) {
+        try {
+            console.log('📡 Chamando API /api/registro...');
+            const result = await apiCall('/api/registro', {
+                method: 'POST',
+                body: JSON.stringify({nome, email, senha})
+            });
+            
+            console.log('📡 Resposta da API registro:', result);
+            
+            if (result && result.ok) {
+                console.log('✅ Registro via API realizado:', result.usuario_id ? `ID: ${result.usuario_id}` : 'Sucesso');
+                console.log('💾 Salvando também localmente como backup...');
+                // Também salvar localmente para fallback
+                addUser({nome, email, senha});
+                return {ok: true, usuario: {nome, email, id: result.usuario_id}};
+            } else {
+                console.warn('❌ API não retornou sucesso:', result);
+            }
+        } catch (error) {
+            console.warn('❌ Registro API falhou, usando local:', error);
+        }
+    } else {
+        console.log('📱 Modo offline: salvando apenas localmente');
+    }
+    
+    // Fallback para sistema local existente
+    console.log('💾 Executando registro local...');
+    const resultado = addUser({nome, email, senha});
+    if (resultado) {
+        console.log('✅ Registro local realizado');
+        return {ok: true, usuario: {nome, email}};
+    }
+    return {ok: false, erro: 'Erro no registro local'};
+};
+
+// Sobrescrever função de produtos para usar API
+const getProductsLocalOriginal = load;
+window.getProductsIntegrado = function(email) {
+    if (modoIntegrado) {
+        // Para compatibilidade síncrona, usar cache local se API já carregou
+        const cached = sessionStorage.getItem('dyva_produtos_api');
+        if (cached) {
+            const produtos = JSON.parse(cached);
+            console.log(`✅ ${produtos.length} produtos do cache API`);
+            return produtos;
+        }
+    }
+    
+    // Fallback para localStorage padrão
+    return JSON.parse(localStorage.getItem('dyva_prod_' + email) || '[]');
+};
+
+// Sobrescrever função de carrinho para usar API
+window.addToCartIntegrado = function(email, produtoId, tamanho) {
+    // Usar sistema local primeiro para resposta imediata
+    addToCartWithSize(email, produtoId, tamanho || 'M');
+    
+    // Sincronizar com API em background se disponível
+    if (modoIntegrado) {
+        setTimeout(async () => {
+            try {
+                await apiCall('/api/carrinho/adicionar', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        produto_id: parseInt(produtoId),
+                        tamanho: tamanho || 'M',
+                        quantidade: 1
+                    })
+                });
+                console.log('✅ Item sincronizado com API');
+            } catch (error) {
+                console.warn('Sync API falhou:', error);
+            }
+        }, 0);
+    }
+    
+    return true;
+};
+
+// Função para obter carrinho via API
+window.getCarrinhoIntegrado = async function() {
+    if (modoIntegrado) {
+        try {
+            const result = await apiCall('/api/carrinho');
+            if (result && result.itens) {
+                console.log(`✅ Carrinho carregado via API: ${result.itens.length} itens`);
+                return result.itens;
+            }
+        } catch (error) {
+            console.warn('Carrinho API falhou, usando local:', error);
+        }
+    }
+    
+    // Fallback para localStorage
+    const email = getSession();
+    if (email) {
+        return getCart(email);
+    }
+    return [];
+};
+
+// Função integrada para carrinho (síncrona para compatibilidade)
+window.getCarrinhoIntegrado = function() {
+    if (modoIntegrado) {
+        // Tenta usar cache da API se já carregou
+        const cached = sessionStorage.getItem('dyva_carrinho_api');
+        if (cached) {
+            const items = JSON.parse(cached);
+            console.log(`✅ ${items.length} itens do carrinho API`);
+            return items;
+        }
+    }
+    
+    // Fallback para localStorage
+    const email = getSession();
+    return email ? getCart(email) : [];
+};
+
+// Função integrada para finalizar pedido
+window.finalizarPedidoIntegrado = async function(pedidoData) {
+    if (modoIntegrado) {
+      try {
+        const result = await apiCall('/api/pedidos/finalizar', {
+          method: 'POST',  
+          body: JSON.stringify(pedidoData)
+        });
+            
+        if (result && result.ok) {
+          console.log('✅ Pedido finalizado via API:', result.pedido_id);
+          // Limpar carrinho via API
+          await apiCall('/api/carrinho/limpar', {method: 'POST'});
+          // Limpar carrinho local também
+          const user = getSession();
+          saveCart(user, []);
+          return {ok: true, pedido: {...pedidoData, id: result.pedido_id}};
+        }
+      } catch (error) {
+        console.warn('Finalizar pedido API falhou, usando local:', error);
+      }
+    }
+    // Fallback para sistema local
+    const user = getSession();
+    addPedido(user, pedidoData);
+    saveCart(user, []); // Limpar carrinho local
+    console.log('✅ Pedido finalizado localmente');
+    return {ok: true, pedido: pedidoData};
+};
+
+// Função integrada para favoritos
+window.toggleFavoritoIntegrado = async function(produtoId) {
+    const user = getSession();
+    if (!user) return false;
+    
+    const favoritos = getFavorites(user);
+    const jaEhFavorito = favoritos.includes(produtoId);
+    
+    if (modoIntegrado) {
+        try {
+            const result = await apiCall('/api/favoritos/toggle', {
+                method: 'POST',
+                body: JSON.stringify({ produto_id: parseInt(produtoId) })
+            });
+            
+            if (result && result.ok) {
+                console.log('✅ Favorito via API:', result.favoritado ? 'adicionado' : 'removido');
+                // Também atualizar localStorage para compatibilidade
+                if (result.favoritado) {
+                    addToFavorites(user, produtoId);
+                    return true;
+                } else {
+                    removeFromFavorites(user, produtoId);
+                    return false;
+                }
+            }
+        } catch (error) {
+            console.warn('Toggle favorito API falhou, usando local:', error);
+        }
+    }
+    
+    // Fallback para sistema local
+    if (jaEhFavorito) {
+        removeFromFavorites(user, produtoId);
+        console.log('✅ Favorito removido localmente');
+        return false;
+    } else {
+        addToFavorites(user, produtoId);
+        console.log('✅ Favorito adicionado localmente');
+        return true;
+    }
+};
+
+// Integração com as funções existentes
+function integrarSistema() {
+    // Sobrescrever getProducts globalmente (mantendo síncrono)
+    const originalGetProducts = window.getProducts;
+    window.getProducts = function(email) {
+        return getProductsIntegrado(email);
+    };
+    
+    // Sobrescrever addToCart globalmente (mantendo síncrono)
+    const originalAddToCart = window.addToCart;
+    window.addToCart = function(email, produtoId) {
+        return addToCartIntegrado(email, produtoId);
+    };
+    
+    // Verificar se homePage existe antes de modificar
+    if (typeof window.homePage === 'function') {
+        const originalHomePage = window.homePage;
+        window.homePage = async function() {
+            // Chamar função original
+            originalHomePage();
+            
+            // Indicador removido para interface mais limpa
+        };
+    }
+    
+    console.log('🔗 Integração do sistema ativada - Funções sobrescritas');
+}
+
+// Inicializar integração
+async function inicializarIntegracao() {
+    console.log('🚀 Iniciando integração...');
+    
+    // Testar API primeiro
+    await testarAPI();
+    
+    // Se API disponível, carregar dados e cachear
+    if (modoIntegrado) {
+        try {
+            // Carregar produtos da API
+            console.log('📦 Carregando produtos da API...');
+            const response = await apiCall('/api/produtos');
+            console.log('📦 Resposta da API produtos:', response);
+            
+            if (response && response.itens && Array.isArray(response.itens)) {
+                sessionStorage.setItem('dyva_produtos_api', JSON.stringify(response.itens));
+                console.log(`📦 ${response.itens.length} produtos da API carregados no cache`);
+            } else {
+                console.warn('📦 Resposta da API inválida:', response);
+            }
+        } catch (error) {
+            console.warn('❌ Erro ao pré-carregar produtos da API:', error);
+        }
+    }
+    
+    // Configurar integração
+    integrarSistema();
+    
+    console.log('✅ Sistema inicializado com integração');
+}
+
+// Executar quando DOM estiver carregado
+document.addEventListener('DOMContentLoaded', function() {
+    // Primeiro inicializar sistema normalmente
+    if (typeof inicializarSistema === 'function') {
+        inicializarSistema();
+    }
+    
+    // Depois fazer a integração com mais tempo para garantir que tudo carregou
+    setTimeout(() => {
+        inicializarIntegracao().catch(error => {
+            console.warn('Integração falhou:', error);
+            // Sistema ainda funciona no modo local mesmo se integração falhar
+        });
+    }, 1000);
+});
 </script>
 </body>
 </html>

@@ -99,7 +99,7 @@ def criar_app() -> Flask:
 	# Rota de verificação do servidor
 	@app.get("/api/ping")
 	def ping():
-		return {"ok": True, "quando": datetime.utcnow().isoformat() + "Z"}
+		return {"ok": True, "quando": datetime.now().isoformat() + "Z"}
 
 	# ----------------------------
 	# Autenticação
@@ -132,26 +132,46 @@ def criar_app() -> Flask:
 			return make_response(jsonify({"erro": "Email já cadastrado"}), 409)
 
 		usuario_id = banco.criar_usuario(nome=nome, email=email, senha_hash=hash_senha(senha), role="user")
+		print(f"✅ NOVO USUÁRIO CRIADO: {nome} ({email}) - ID: {usuario_id}")
 		return {"ok": True, "usuario_id": usuario_id}
 
 	@app.post("/api/login")
 	def login():
 		try:
+			print("🔐 LOGIN: Recebendo requisição...")
 			dados = request.get_json(force=True)
+			print(f"🔐 LOGIN: Dados recebidos: {dados}")
+			
 			if not dados:
+				print("❌ LOGIN: JSON vazio")
 				return make_response(jsonify({"erro": "JSON inválido"}), 400)
-		except:
+		except Exception as e:
+			print(f"❌ LOGIN: Erro ao processar JSON: {e}")
 			return make_response(jsonify({"erro": "JSON inválido"}), 400)
 			
 		email = (dados.get("email") or "").strip().lower()
 		senha = (dados.get("senha") or "").strip()
+		
+		print(f"🔐 LOGIN: Email processado: '{email}'")
+		print(f"🔐 LOGIN: Senha recebida: {'*' * len(senha)}")
 
 		usuario = banco.obter_usuario_por_email(email)
-		if not usuario or usuario["senha_hash"] != hash_senha(senha):
+		if not usuario:
+			print(f"❌ LOGIN: Usuário não encontrado: {email}")
+			return make_response(jsonify({"erro": "Credenciais inválidas"}), 401)
+			
+		print(f"🔐 LOGIN: Usuário encontrado: {usuario['nome']}")
+		
+		hash_fornecido = hash_senha(senha)
+		if usuario["senha_hash"] != hash_fornecido:
+			print(f"❌ LOGIN: Senha incorreta para {email}")
+			print(f"❌ Hash esperado: {usuario['senha_hash'][:20]}...")
+			print(f"❌ Hash fornecido: {hash_fornecido[:20]}...")
 			return make_response(jsonify({"erro": "Credenciais inválidas"}), 401)
 
 		token = gerar_token()
 		banco.criar_sessao(token=token, usuario_id=usuario["id"]) 
+		print(f"🔑 LOGIN REALIZADO: {usuario['nome']} ({email}) - Token: {token[:8]}...")
 		return {"ok": True, "token": token, "usuario": {"id": usuario["id"], "nome": usuario["nome"], "email": usuario["email"], "role": usuario["role"]}}
 
 	@app.get("/api/me")
@@ -168,6 +188,15 @@ def criar_app() -> Flask:
 	def listar_produtos():
 		itens = banco.listar_produtos(ativos=True)
 		return {"itens": itens}
+
+	@app.get("/api/produtos/<int:produto_id>/tamanhos")
+	def listar_tamanhos(produto_id: int):
+		produto = banco.obter_produto(produto_id)
+		if not produto:
+			return make_response(jsonify({"erro": "Produto não encontrado"}), 404)
+		
+		tamanhos = banco.listar_tamanhos(produto_id)
+		return {"tamanhos": tamanhos}
 
 	@app.get("/api/produtos/<int:produto_id>")
 	def obter_produto(produto_id: int):
@@ -195,17 +224,42 @@ def criar_app() -> Flask:
 		nome = (dados.get("nome") or "").strip()
 		categoria = (dados.get("categoria") or "").strip()
 		
+		# Validações de tamanho para prevenir overflow
+		if len(nome) > 100:
+			return make_response(jsonify({"erro": "Nome deve ter no máximo 100 caracteres"}), 400)
+		
+		if len(categoria) > 50:
+			return make_response(jsonify({"erro": "Categoria deve ter no máximo 50 caracteres"}), 400)
+		
 		try:
 			preco = float(dados.get("preco") or 0)
 		except (ValueError, TypeError):
 			return make_response(jsonify({"erro": "Preço inválido"}), 400)
+		
+		# Validar preço dentro de limites razoáveis
+		if preco <= 0 or preco > 999999:
+			return make_response(jsonify({"erro": "Preço deve estar entre 0.01 e 999.999"}), 400)
 			
 		imagem = (dados.get("imagem") or "").strip()
 		descricao = (dados.get("descricao") or "").strip() or None
+		
+		# Validar tamanho da descrição
+		if descricao and len(descricao) > 1000:
+			return make_response(jsonify({"erro": "Descrição deve ter no máximo 1000 caracteres"}), 400)
+		
+		# Sanitizar contra XSS básico
+		import html
+		nome = html.escape(nome)
+		categoria = html.escape(categoria)
+		if descricao:
+			descricao = html.escape(descricao)
+		if imagem:
+			imagem = html.escape(imagem)
+		
 		ativo = 1 if bool(dados.get("ativo", True)) else 0
 
-		if not nome or preco <= 0:
-			return make_response(jsonify({"erro": "Produto inválido"}), 400)
+		if not nome:
+			return make_response(jsonify({"erro": "Nome é obrigatório"}), 400)
 
 		pid = banco.criar_produto(nome, categoria, preco, imagem, ativo, descricao)
 
@@ -221,18 +275,29 @@ def criar_app() -> Flask:
 
 	@app.put("/api/produtos/<int:produto_id>")
 	def atualizar_produto(produto_id: int):
+		print(f"✏️ PRODUTO: Recebendo requisição de atualização...")
+		print(f"✏️ PRODUTO: ID do produto: {produto_id}")
+		
 		usr = requer_auth()
 		if not isinstance(usr, dict):
+			print(f"❌ PRODUTO: Erro de autenticação")
 			return usr
+			
+		print(f"✏️ PRODUTO: Admin autenticado: {usr['nome']} (ID: {usr['id']})")
+		
 		erro = requer_admin(usr)
 		if erro:
+			print(f"❌ PRODUTO: Usuário não é admin")
 			return erro
 
 		try:
 			dados = request.get_json(force=True)
+			print(f"✏️ PRODUTO: Dados recebidos: {dados}")
 			if not dados:
+				print(f"❌ PRODUTO: JSON inválido ou vazio")
 				return make_response(jsonify({"erro": "JSON inválido"}), 400)
-		except:
+		except Exception as e:
+			print(f"❌ PRODUTO: Erro ao processar JSON: {e}")
 			return make_response(jsonify({"erro": "JSON inválido"}), 400)
 			
 		nome = dados.get("nome")
@@ -241,18 +306,25 @@ def criar_app() -> Flask:
 		imagem = dados.get("imagem")
 		ativo = dados.get("ativo")
 		descricao = dados.get("descricao")
+		
+		print(f"✏️ PRODUTO: Atualizando - Nome: '{nome}', Preço: {preco}, Categoria: '{categoria}'")
 
 		ok = banco.atualizar_produto(produto_id, nome, categoria, preco, imagem, ativo, descricao)
 		if not ok:
+			print(f"❌ PRODUTO: Produto ID {produto_id} não encontrado no banco")
 			return make_response(jsonify({"erro": "Produto não encontrado"}), 404)
 
 		# Atualiza tamanhos se vierem no payload
 		tamanhos = dados.get("tamanhos")
 		if isinstance(tamanhos, list):
 			try:
+				print(f"✏️ PRODUTO: Atualizando tamanhos: {tamanhos}")
 				banco.salvar_tamanhos(produto_id, tamanhos)
-			except Exception:
+			except Exception as e:
+				print(f"❌ PRODUTO: Erro ao atualizar tamanhos: {e}")
 				return make_response(jsonify({"erro": "Tamanhos inválidos"}), 400)
+				
+		print(f"✅ PRODUTO ATUALIZADO: ID {produto_id} - {nome} por {usr['nome']}")
 		return {"ok": True}
 
 	@app.delete("/api/produtos/<int:produto_id>")
@@ -282,24 +354,49 @@ def criar_app() -> Flask:
 
 	@app.post("/api/carrinho/adicionar")
 	def carrinho_adicionar():
+		print(f"🛒 CARRINHO: Recebendo requisição...")
 		usr = requer_auth()
 		if not isinstance(usr, dict):
+			print(f"❌ CARRINHO: Erro de autenticação")
 			return usr
+		print(f"🛒 CARRINHO: Usuário autenticado: {usr['nome']} (ID: {usr['id']})")
+		
 		try:
 			dados = request.get_json(force=True)
+			print(f"🛒 CARRINHO: Dados recebidos: {dados}")
+			
 			if not dados:
+				print(f"❌ CARRINHO: JSON inválido ou vazio")
 				return make_response(jsonify({"erro": "JSON inválido"}), 400)
+				
 			produto_id = int(dados.get("produto_id"))
 			tamanho = (dados.get("tamanho") or "").strip()
-			quantidade = max(1, int(dados.get("quantidade", 1)))
+			quantidade_raw = dados.get("quantidade", 1)
+			
+			print(f"🛒 CARRINHO: Produto ID: {produto_id}, Tamanho: '{tamanho}', Quantidade: {quantidade_raw}")
+			
+			# Validar quantidade explicitamente
+			try:
+				quantidade = int(quantidade_raw)
+				if quantidade <= 0:
+					return make_response(jsonify({"erro": "Quantidade deve ser maior que zero"}), 400)
+				if quantidade > 99:
+					return make_response(jsonify({"erro": "Quantidade máxima é 99"}), 400)
+			except (ValueError, TypeError):
+				return make_response(jsonify({"erro": "Quantidade deve ser um número válido"}), 400)
+				
 		except (ValueError, TypeError, KeyError):
 			return make_response(jsonify({"erro": "Dados inválidos"}), 400)
 		if not tamanho:
+			print(f"❌ CARRINHO: Tamanho não informado")
 			return make_response(jsonify({"erro": "Informe o tamanho"}), 400)
 		
+		print(f"🛒 CARRINHO: Tentando adicionar ao carrinho...")
 		ok = banco.adicionar_ao_carrinho(usr["id"], produto_id, tamanho, quantidade)
 		if not ok:
+			print(f"❌ CARRINHO: Produto {produto_id} não encontrado ou inativo")
 			return make_response(jsonify({"erro": "Produto inválido ou inativo"}), 400)
+		print(f"✅ ITEM ADICIONADO: {usr['nome']} - Produto {produto_id} ({tamanho}) x{quantidade}")
 		return {"ok": True}
 
 	@app.post("/api/carrinho/remover")
@@ -354,6 +451,8 @@ def criar_app() -> Flask:
 		marcado = banco.alternar_favorito(usr["id"], produto_id)
 		if marcado is None:
 			return make_response(jsonify({"erro": "Produto inválido"}), 400)
+		acao = "ADICIONADO" if marcado else "REMOVIDO"
+		print(f"❤️ FAVORITO {acao}: {usr['nome']} - Produto {produto_id}")
 		return {"ok": True, "favoritado": marcado}
 
 	# ----------------------------
@@ -361,31 +460,81 @@ def criar_app() -> Flask:
 	# ----------------------------
 	@app.post("/api/pedidos/finalizar")
 	def finalizar_pedido():
+		print(f"📦 PEDIDO: Recebendo requisição de finalizar pedido...")
 		usr = requer_auth()
 		if not isinstance(usr, dict):
+			print(f"❌ PEDIDO: Erro de autenticação")
 			return usr
+		print(f"📦 PEDIDO: Usuário autenticado: {usr['nome']} (ID: {usr['id']})")
+		
 		try:
 			dados = request.get_json(force=True)
+			print(f"📦 PEDIDO: Dados recebidos: {dados}")
 			if not dados:
+				print(f"❌ PEDIDO: JSON inválido ou vazio")
 				return make_response(jsonify({"erro": "JSON inválido"}), 400)
-		except:
+		except Exception as e:
+			print(f"❌ PEDIDO: Erro ao processar JSON: {e}")
 			return make_response(jsonify({"erro": "JSON inválido"}), 400)
 			
-		metodo = (dados.get("metodo_pagamento") or "").strip()
-		# Calcula total a partir do carrinho e tabela de produtos
-		itens = banco.listar_carrinho(usr["id"])
-		if not itens:
-			return make_response(jsonify({"erro": "Carrinho vazio"}), 400)
-		total = sum(i["preco"] * i["quantidade"] for i in itens)
-		pedido_id = banco.criar_pedido(usr["id"], total, metodo or "Desconhecido", status="Pago")
-		for i in itens:
-			# valida e baixa estoque por tamanho
-			if i.get("tamanho"):
-				ok = banco.decrementar_estoque(i["produto_id"], i["tamanho"], i["quantidade"])
-				if not ok:
-					return make_response(jsonify({"erro": f"Sem estoque do tamanho {i['tamanho']}"}), 400)
-			banco.adicionar_item_pedido(pedido_id, i["produto_id"], i["nome"], i["preco"], i["quantidade"], i.get("tamanho"))
-		banco.limpar_carrinho(usr["id"])  # esvazia após pedido
+		# Verificar se é pedido do frontend (dados completos) ou API simples
+		if "produtos" in dados and "total" in dados:
+			print(f"📦 PEDIDO: Formato frontend - processando dados completos")
+			# Formato do frontend
+			produtos_pedido = dados.get("produtos", [])
+			if not produtos_pedido:
+				print(f"❌ PEDIDO: Lista de produtos vazia")
+				return make_response(jsonify({"erro": "Nenhum produto no pedido"}), 400)
+			
+			metodo = dados.get("pagamento", "Desconhecido")
+			# Total pode vir como string ou number
+			total_raw = dados.get("total", 0)
+			if isinstance(total_raw, str):
+				total = float(total_raw.replace(",", "."))
+			else:
+				total = float(total_raw)
+			
+			print(f"📦 PEDIDO: {len(produtos_pedido)} produtos, Total: R${total}, Método: {metodo}")
+			
+			pedido_id = banco.criar_pedido(usr["id"], total, metodo, status="Pago")
+			
+			# Adicionar itens do pedido
+			for produto in produtos_pedido:
+				produto_id = produto.get("id")
+				nome = produto.get("nome", "Produto")
+				# Preco pode vir como int, float ou string
+				preco_raw = produto.get("preco", 0)
+				if isinstance(preco_raw, str):
+					preco = float(preco_raw.replace(",", "."))
+				else:
+					preco = float(preco_raw)
+				quantidade = produto.get("qty", 1)
+				tamanho = produto.get("tamanho", "")
+				
+				banco.adicionar_item_pedido(pedido_id, produto_id, nome, preco, quantidade, tamanho)
+				print(f"📦 PEDIDO: Item adicionado - {nome} ({tamanho}) x{quantidade} = R${preco}")
+		else:
+			print(f"📦 PEDIDO: Formato API - usando carrinho")
+			# Formato original da API
+			metodo = (dados.get("metodo_pagamento") or "").strip()
+			itens = banco.listar_carrinho(usr["id"])
+			if not itens:
+				print(f"❌ PEDIDO: Carrinho vazio")
+				return make_response(jsonify({"erro": "Carrinho vazio"}), 400)
+			total = sum(i["preco"] * i["quantidade"] for i in itens)
+			pedido_id = banco.criar_pedido(usr["id"], total, metodo or "Desconhecido", status="Pago")
+			
+			for i in itens:
+				# valida e baixa estoque por tamanho
+				if i.get("tamanho"):
+					ok = banco.decrementar_estoque(i["produto_id"], i["tamanho"], i["quantidade"])
+					if not ok:
+						print(f"❌ PEDIDO: Sem estoque - {i['tamanho']}")
+						return make_response(jsonify({"erro": f"Sem estoque do tamanho {i['tamanho']}"}), 400)
+				banco.adicionar_item_pedido(pedido_id, i["produto_id"], i["nome"], i["preco"], i["quantidade"], i.get("tamanho"))
+			banco.limpar_carrinho(usr["id"])  # esvazia após pedido
+		
+		print(f"✅ PEDIDO FINALIZADO: {usr['nome']} - ID: {pedido_id} - Total: R$ {total:.2f}")
 		return {"ok": True, "pedido_id": pedido_id, "total": total}
 
 	@app.get("/api/pedidos")
@@ -418,6 +567,7 @@ if __name__ == "__main__":
 	print("   🛍️  Produtos:")
 	print("      GET  /api/produtos    - Listar todos os produtos")
 	print("      GET  /api/produtos/id - Produto específico")
+	print("      GET  /api/produtos/id/tamanhos - Tamanhos do produto")
 	print("      POST /api/produtos    - Criar produto (admin)")
 	print("      PUT  /api/produtos/id - Editar produto (admin)")
 	print("      DEL  /api/produtos/id - Deletar produto (admin)")
@@ -440,5 +590,7 @@ if __name__ == "__main__":
 	print("✅ Sistema pronto para receber requisições!")
 	print("="*70 + "\n")
 	# Servidor roda em http://127.0.0.1:5000
+	import logging
+	logging.basicConfig(level=logging.INFO)
 	app.run(host="127.0.0.1", port=int(os.environ.get("PORT", 5000)), debug=False)
 
